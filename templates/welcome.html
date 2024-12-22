@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Timezap</title>
+    <!-- Correct link to the external CSS file -->
+    <link rel="stylesheet" href="{{ url_for('static' , filename ='assets/css/styles.css')}} " />
+</head>
+<body>
+    <div class="gradient-background"></div>
+    <div class="splash-screen">
+        <div class="content">
+            <h1>Welcome to Timezap</h1>
+            <p>If you want to start your task, then click below...</p>
+            <button class="start-button" onclick="redirectToNextPage()">Start Task</button>
+        </div>
+    </div>
+
+    <script>
+        function redirectToNextPage() {
+            window.location.href = "index.html"; // Redirect to the next page
+        }
+    </script>
+</body>
+</html>

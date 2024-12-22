@@ -4,7 +4,7 @@
 	html5up.net | @ajlkn
 	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
 -->
-<html>
+	<html lang="en">
 	<head>
 		<title>Timezap</title>
 		<meta charset="utf-8" />
@@ -14,15 +14,16 @@
 		<link rel="stylesheet" href="{{ url_for('static' , filename ='assets/css/fontawesome-all.min.css')}} " />
 		<link rel="stylesheet" href="{{ url_for('static' , filename ='assets/css/noscript.css')}} " />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-	</head>
-	<body class="is-preload">
 
-		<!-- Wrapper -->
+	<body>
+
+
+	<!-- Wrapper -->
 			<div id="wrapper">
 
 				<!-- Header -->
 					<header id="header" class="alt">
-						<a href="index.html" class="logo"><strong>Forty</strong> <span>by HTML5 UP</span></a>
+						<a href="index.html" class="logo"><strong></strong> <span></span></a>
 						<nav>
 							<a href="#menu">Menu</a>
 						</nav>
@@ -64,7 +65,7 @@
 							<section id="one" class="tiles">
 								<article>
 									<span class="image">
-										<img src="images/pic01.jpg" alt="" />
+										<img src="{{ url_for('static', filename='assets/images/t.jpg') }}" alt="Task Image" />
 									</span>
 									<header class="major">
 										<h3><a href="landing.html" class="link">Tesk</a></h3>
@@ -109,7 +110,7 @@
 								</article>
 								<article>
 									<span class="image">
-										<img src="images/pic06.jpg" alt="" />
+										<img src="images/u.jpg" alt="" />
 									</span>
 									<header class="major">
 										<h3><a href="landing.html" class="link">Group Discussion Task</a></h3>
