@@ -12,6 +12,14 @@
     <div class="splash-screen">
         <div class="content">
             <h1>Welcome to Timezap</h1>
+            <h4>
+           <ul >
+            <li><img src="{{ url_for('static', filename='images/ic1.jpg') }}" alt="Task Icon">Create Tasks Quickly and Easily</li>
+            <li><img src="{{ url_for('static', filename='images/ic2.jpg') }}" alt="Reminder Icon">Set Time For Task</li>
+            <li><img src="{{ url_for('static', filename='images/ic6.jpg') }}" alt="Widget Icon">Custom Task</li>
+            <li><img src="{{ url_for('static', filename='images/ic5.jpg') }}" alt="Theme Icon">View Progress</li>
+          </ul>
+            </h4>
             <p>If you want to start your task, then click below...</p>
             <button class="start-button" onclick="redirectToNextPage()">Start Task</button>
         </div>
