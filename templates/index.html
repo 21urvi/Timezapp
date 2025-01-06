@@ -50,7 +50,7 @@ https://templatemo.com/tm-520-highway
             </div>
         </div>
         <video autoplay loop muted>
-        	<source src="highway-loop.mp4" type="video/mp4" />
+        	<source src="{{ url_for('static', filename='video/collage.mp4') }}" />
         </video>
     </div>
 
@@ -62,12 +62,12 @@ https://templatemo.com/tm-520-highway
                     <a href="img/big_portfolio_item_4.jpg" data-lightbox="image-1"><div class="thumb">
                         <div class="hover-effect">
                             <div class="hover-content">
-                                <h1>Biodiesel <em>squid</em></h1>
-                                <p>Awesome Subtittle Goes Here</p>
+                                <h1>Task </em></h1>
+                                <p>Note your task</p>
                             </div>
                         </div>
                         <div class="image">
-                            <img src="img/portfolio_item_4.jpg">
+                            <img src="{{ url_for('static', filename='img/t.jpg') }}" alt="Task Image" />
                         </div>
                     </div></a>
                 </div>
@@ -77,12 +77,12 @@ https://templatemo.com/tm-520-highway
                     <a href="img/big_portfolio_item_2.jpg" data-lightbox="image-1"><div class="thumb">
                         <div class="hover-effect">
                             <div class="hover-content">
-                                <h1>raclette <em>taxidermy</em></h1>
-                                <p>Awesome Subtittle Goes Here</p>
+                                <h1>Subject Specific<em> Task </em></h1>
+                                <p>Note your Subject Specific task</p>
                             </div>
                         </div>
                         <div class="image">
-                            <img src="img/portfolio_item_2.jpg">
+                            <img src="{{ url_for('static', filename='img/s.jpg') }}" alt="Task Image" />
                         </div>
                     </div></a>
                 </div>

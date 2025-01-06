@@ -3,7 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <title>Verification</title>
-    <link rel="stylesheet" href="{{ url_for('static' , filename ='assets/css/style.css')}} " />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="container">
+    <div class="login-box">
+        <h2>Verification</h2>
+        <form action="/verify" method="POST"> <!-- Updated to POST OTP to Flask -->
+            <div class="input-box">
+                <input type="text" name="code" required>
+                <label>Verification Code</label>
+            </div>
+            <button type="submit" class="btn" onclick="redirectToNextPage()">Verify</button>
+
+        </form>
+        <div class="resend-code">
+            <a href="#">Resend Code</a>
+        </div>
+    </div>
+</div>
+<script>
+        function redirectToNextPage() {
+            window.location.href = "welcome.html"; // Redirect to the next page
+        }
+    </script>
+</body>
+</html>
+
+
+
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Verification</title>
+    <link rel="stylesheet" href="{{ url_for('static' , filename ='css/style.css')}} " />
 </head>
 <body>
 <div class="container">
@@ -14,7 +48,8 @@
                 <input type="text" name="code" required>
                 <label>Verification Code</label>
             </div>
-            <button type="submit" class="btn">Verify</button>
+            <button type="submit" class="btn" onclick="redirectToNextPage()">Verify</button>
+
         </form>
         <div class="resend-code">
             <a href="#">Resend Code</a>
@@ -71,5 +106,10 @@
     <span style="--i:48;"></span>
     <span style="--i:49;"></span>
 </div>
+<script>
+        function redirectToNextPage() {
+            window.location.href = "welcome.html"; // Redirect to the next page
+        }
+    </script>
 </body>
-</html>
+</html>-->
