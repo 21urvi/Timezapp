@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+'''from flask import Flask, render_template, request, redirect, url_for, session, flash
 import random
 from flask_mysqldb import MySQL
 import smtplib
@@ -104,14 +104,14 @@ def welcome():
 
 if __name__ == '__main__':
     app.run(debug=True)
+'''
 
 
-
-'''from flask import Flask, render_template
+from flask import Flask, render_template
 
 app = Flask(__name__ , static_folder='static')
 
-@app.route('/')
+'''@app.route('/')
 def login():
     return render_template('login.html')
 
@@ -121,10 +121,10 @@ def verify():
 
 @app.route('/welcome.html')
 def welcome():
-    return render_template('welcome.html')
+    return render_template('welcome.html')'''
 
 # Route for the homepage (index.html)
-@app.route('/index.html')
+@app.route('/')
 def index():
     return render_template('index.html')
 
@@ -150,4 +150,4 @@ def about():
     return render_template('about.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)'''
+    app.run(debug=True)
