@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subject Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .subject-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            margin: auto;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            margin-top: 10px;
+            display: block;
+            color: #555;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+            border: none;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button#delete-btn {
+            background-color: #f44336;
+        }
+
+        button#delete-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="subject-container">
+        <h2>Subject Manager</h2>
+        <form method="POST" action="/add_subject">
+            <label for="subject">Subject Name:</label>
+            <input type="text" id="subject" name="subject" placeholder="Enter subject name" required>
+
+            <label for="subject-task">Subject Task:</label>
+            <input type="text" id="subject-task" name="subject_task" placeholder="Enter subject task" required>
+
+            <label for="priority">Priority:</label>
+            <select id="priority" name="priority">
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+            </select>
+
+            <button type="submit">Save Subject</button>
+        </form>
+
+        <h3>Subject List:</h3>
+        <ul>
+            {% for subject in subjects %}
+                <li>
+                    <strong>Subject ID:</strong> {{ subject[0] }} |
+                    <strong>Subject Name:</strong> {{ subject[1] }} |
+                    <strong>Task:</strong> {{ subject[2] }} |
+                    <strong>Priority:</strong> {{ subject[3] }}
+                    <form method="POST" action="/delete_subject" style="display:inline;">
+                        <input type="hidden" name="subject_id" value="{{ subject[0] }}">
+                        <button type="submit" id="delete-btn">Delete</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>

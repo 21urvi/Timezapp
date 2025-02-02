@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revision Manager</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .revision-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: auto;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            margin-top: 10px;
+            display: block;
+            color: #555;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+            border: none;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button#delete-btn {
+            background-color: #f44336;
+        }
+
+        button#delete-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            display: flex;
+            flex-direction: column;
+            border-left: 4px solid #4CAF50;
+            padding-left: 10px;
+        }
+
+        .revision-id {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .revision-details {
+            font-size: 16px;
+            color: #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="revision-container">
+        <h2>Revision Manager</h2>
+        <form method="POST" action="/add_revision">
+            <label for="notes">Notes:</label>
+            <input type="text" id="notes" name="notes" placeholder="Enter notes" required>
+
+            <label for="focus-point">Focus Point:</label>
+            <input type="text" id="focus-point" name="focus_point" placeholder="Enter focus point" required>
+
+            <label for="priority">Priority:</label>
+            <select id="priority" name="priority">
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+            </select>
+
+            <button type="submit">Save Revision</button>
+        </form>
+
+        <h3>Revision List:</h3>
+        <ul>
+            {% for revision in revisions %}
+                <li>
+                    <div class="revision-id">Revision ID: {{ revision[0] }}</div>
+                    <div class="revision-details">
+                        <strong>Notes:</strong> {{ revision[1] }} <br>
+                        <strong>Focus Point:</strong> {{ revision[2] }} <br>
+                        <strong>Priority:</strong> {{ revision[3] }}
+                    </div>
+                    <form method="POST" action="/delete_revision" style="display:inline;">
+                        <input type="hidden" name="revision_id" value="{{ revision[0] }}">
+                        <button type="submit" id="delete-btn">Delete</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
