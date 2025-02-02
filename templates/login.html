@@ -1,15 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+		<title>Login Form</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 </head>
 <body>
-      <link rel="stylesheet" href="{{ url_for('static' , filename ='css/style.css')}} " />
+<link rel="stylesheet" href="{{ url_for('static' , filename ='css/styles.css')}} " />
 <div class="container">
         <div class="login-box">
             <h2>Login</h2>
-           <form action="/" method="POST">
+             <form action="/" method="POST">
     <div class="input-box">
         <input type="email" name="email" required>
         <label>Email</label>
@@ -18,14 +18,13 @@
         <input type="password" name="password" required>
         <label>Password</label>
     </div>
-    <div>
+    <div class="input-box">
         <img src="{{ url_for('captcha') }}" alt="CAPTCHA">
-        <input type="text" name="captcha" required placeholder="Enter CAPTCHA">
+        <input type="text" name="captcha" required >
+        <label>Captcha</label>
     </div>
     <button type="submit" class="btn">Login</button>
 </form>
-
-
         </div>
         <span style="--i:0;"></span>
         <span style="--i:1;"></span>
@@ -57,7 +56,7 @@
         <span style="--i:27;"></span>
         <span style="--i:28;"></span>
         <span style="--i:29;"></span>
-         <span style="--i:30;"></span>
+		 <span style="--i:30;"></span>
         <span style="--i:31;"></span>
         <span style="--i:32;"></span>
         <span style="--i:33;"></span>
@@ -77,13 +76,14 @@
         <span style="--i:47;"></span>
         <span style="--i:48;"></span>
         <span style="--i:49;"></span>
+        <span style="--i:50;"></span>
+        <span style="--i:51;"></span>
+        <span style="--i:52;"></span>
+        <span style="--i:53;"></span>
+        <span style="--i:54;"></span>
+        <span style="--i:55;"></span>
 
     </div>
-
-<script>
-        function redirectToNextPage() {
-            window.location.href = "index.html"; // Redirect to the next page
-        }
-    </script>
 </body>
 </html>
+

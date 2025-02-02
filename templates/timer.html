@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="stylesheet" href="{{ url_for('static' , filename ='css/TimerStyle.css')}} " />
+
+    <title>Pomodoro Timer</title>
+
+</head>
+<center>
+<body>
+    <h1>TimeZap</h1>
+     <button class="button" onclick="shortBreak()">Short Break (5 min)</button>
+     <button class="button" onclick="longBreak()">Long Break (15 min)</button>
+     <div id="timer">25:00</div>
+    <button class="button" onclick="startTimer()">Start</button>
+    <button class="button" onclick="stopTimer()">Stop</button>
+    <button class="button" onclick="resetTimer()">Reset</button>
+
+
+    <script>
+        let timer;
+        let isRunning = false;
+        let seconds = 1500;  // 25 minutes
+
+        function updateTimerDisplay() {
+            let minutes = Math.floor(seconds / 60);
+            let remainingSeconds = seconds % 60;
+            document.getElementById('timer').innerHTML = `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+        }
+
+        function startTimer() {
+            if (!isRunning) {
+                isRunning = true;
+                timer = setInterval(function() {
+                    seconds--;
+                    updateTimerDisplay();
+                    if (seconds <= 0) {
+                        clearInterval(timer);
+                        isRunning = false;
+                    }
+                }, 1000);
+            }
+        }
+
+        function stopTimer() {
+            clearInterval(timer);
+            isRunning = false;
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            isRunning = false;
+            seconds = 1500;
+            updateTimerDisplay();
+        }
+
+        function shortBreak() {
+            fetch('/short_break', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    seconds = data.time_left;
+                    updateTimerDisplay();
+                });
+        }
+
+        function longBreak() {
+            fetch('/long_break', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    seconds = data.time_left;
+                    updateTimerDisplay();
+                });
+        }
+
+        // Initialize display
+        updateTimerDisplay();
+    </script>
+</body>
+</center>
+</html>
