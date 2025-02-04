@@ -1,4 +1,95 @@
-from flask import Flask, render_template, request, session, redirect, \
+from flask import Flask, render_template, request, redirect, session, flash, url_for, send_file
+import mysql.connector
+import bcrypt
+import random
+import string
+import io
+from captcha.image import ImageCaptcha
+
+app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # Change this for security
+
+# Configure session
+app.config['SESSION_TYPE'] = 'filesystem'
+
+# MySQL Database Configuration
+DB_CONFIG = {
+    "host": "localhost",
+    "user": "root",  # Change this to your MySQL username
+    "password": "urvi2115",  # Change this to your MySQL password
+    "database": "timezap"
+}
+
+# Function to connect to the MySQL database
+def get_db_connection():
+    return mysql.connector.connect(**DB_CONFIG)
+
+# Function to generate CAPTCHA text
+def generate_captcha_text():
+    captcha_text = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+    session['captcha_answer'] = captcha_text
+    return captcha_text
+
+# Route to generate CAPTCHA image
+@app.route('/captcha')
+def captcha():
+    image = ImageCaptcha(width=280, height=90)
+    captcha_text = generate_captcha_text()
+    data = image.generate(captcha_text)
+    return send_file(io.BytesIO(data.getvalue()), mimetype='image/png')
+
+# Route for login
+@app.route("/", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        gmail = request.form["gmail"]  # Changed from 'email' to 'gmail'
+        password = request.form["password"]
+        captcha_response = request.form["captcha"]
+
+        # Validate CAPTCHA
+        if captcha_response.upper() != session.get('captcha_answer', ''):
+            flash("Incorrect CAPTCHA. Try again!", "danger")
+            return redirect(url_for("login"))
+
+        # Check user credentials in the database
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM login WHERE gmail = %s", (gmail,))  # Changed column name to 'gmail'
+        user = cursor.fetchone()
+        conn.close()
+
+        if user and bcrypt.checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):  # Ensure hashed passwords
+            session["user"] = gmail
+            return redirect(url_for("welcome"))
+        else:
+            flash("Invalid Gmail or password", "danger")  # Updated message
+            return redirect(url_for("login"))
+
+    return render_template("login.html")
+
+# Route for dashboard
+@app.route("/welcome")
+def welcome():
+    if "user" not in session:
+        return redirect(url_for("login"))
+    return render_template("welcome.html", user=session["user"])
+
+# Logout route
+@app.route("/logout")
+def logout():
+    session.pop("user", None)
+    flash("Logged out successfully!", "info")
+    return redirect(url_for("login"))
+
+# Run the Flask app
+if __name__ == "__main__":
+    app.run(debug=True)
+
+
+
+
+
+'''from flask import Flask, render_template, request, session, redirect, \
     url_for, flash, jsonify,send_file
 from flask_mysqldb import MySQL
 from PIL import Image, ImageDraw, ImageFont
@@ -13,7 +104,7 @@ import threading
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-#index
+#---------------------------------------------------------------------------------------index
 
 @app.route('/')
 def index():
@@ -127,7 +218,7 @@ def register():
     return render_template('register.html')
 
 
-#Task
+#----------------------------------------------------------------------------------------Task
 
 # Secret key for session management
 app.secret_key = os.urandom(24)
@@ -202,11 +293,7 @@ def delete_task():
 
     return redirect(url_for('task'))
 
-
-
-
-
-'''#Timer
+#------------------------------------------------------------------------------------Timer
 
 timer_running = False
 timer_time = 25 * 60  # 25 minutes in seconds
@@ -263,237 +350,9 @@ def long_break():
     elapsed_time = 0
     timer_time = 15 * 60  # 15 minutes in seconds
     return jsonify({'status': 'long_break', 'time_left': timer_time})
-'''
-if __name__ == '__main__':
-    app.run(debug=True)
-
-'''from flask import Flask, render_template, request, redirect, url_for, session
-import os
-import time
-import threading
-from flask import Flask, render_template, jsonify
-
-app = Flask(__name__)
-
-# Secret key for session management
-app.secret_key = os.urandom(24)  # In production, you should use a proper secret key
-
-
-@app.route('/index.html')
-def index():
-    return render_template('index.html')
-
-
-@app.route('/task.html')
-def task():
-    # Retrieve the tasks from session, or initialize an empty list if no tasks are stored
-    tasks = session.get('tasks', [])
-    return render_template('task.html', tasks=tasks)
-
-
-@app.route('/add_task', methods=['POST'])
-def add_task():
-    task_id = request.form.get('task_id')
-    task_name = request.form.get('task_name')
-    priority = request.form.get('priority')
-
-    # Validate input and add task to session
-    if task_id and task_name:
-        task = {
-            'id': task_id,
-            'name': task_name,
-            'priority': priority
-        }
-
-        # Get existing tasks from session, if any
-        tasks = session.get('tasks', [])
-        tasks.append(task)
-
-        # Save tasks back to session
-        session['tasks'] = tasks
-
-    return redirect(url_for('task'))
-
-
-@app.route('/delete_task', methods=['POST'])
-def delete_task():
-    task_id = request.form.get('task_id')
-
-    # Retrieve tasks from session
-    tasks = session.get('tasks', [])
-
-    # Filter out the task by ID
-    tasks = [task for task in tasks if task['id'] != task_id]
-
-    # Save the updated task list back to session
-    session['tasks'] = tasks
-
-    return redirect(url_for('task'))
-
-
-timer_running = False
-timer_time = 25 * 60  # 25 minutes in seconds
-start_time = 0
-elapsed_time = 0
-
-# Timer Worker
-def run_timer():
-    global timer_time, elapsed_time, timer_running, start_time
-    while timer_running:
-        if timer_running:
-            # Increment elapsed time
-            elapsed_time = time.time() - start_time
-            time.sleep(1)
-
-@app.route('/')
-def timer():
-    return render_template('timer.html', time_left=timer_time - int(elapsed_time))
-
-@app.route('/start', methods=['POST'])
-def start_timer():
-    global timer_running, start_time, elapsed_time
-    if not timer_running:
-        timer_running = True
-        start_time = time.time() - elapsed_time  # Start from the elapsed time
-        threading.Thread(target=run_timer, daemon=True).start()
-    return jsonify({'status': 'started'})
-
-@app.route('/stop', methods=['POST'])
-def stop_timer():
-    global timer_running
-    timer_running = False
-    return jsonify({'status': 'stopped'})
-
-@app.route('/reset', methods=['POST'])
-def reset_timer():
-    global timer_running, elapsed_time
-    timer_running = False
-    elapsed_time = 0
-    return jsonify({'status': 'reset', 'time_left': timer_time})
-
-@app.route('/short_break', methods=['POST'])
-def short_break():
-    global timer_running, elapsed_time, timer_time
-    timer_running = False
-    elapsed_time = 0
-    timer_time = 5 * 60  # 5 minutes in seconds
-    return jsonify({'status': 'short_break', 'time_left': timer_time})
-
-@app.route('/long_break', methods=['POST'])
-def long_break():
-    global timer_running, elapsed_time, timer_time
-    timer_running = False
-    elapsed_time = 0
-    timer_time = 15 * 60  # 15 minutes in seconds
-    return jsonify({'status': 'long_break', 'time_left': timer_time})
-
-
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)'''
-
-
-
-
-'''from flask import Flask, render_template, request, redirect, url_for, session
-from flask_mysqldb import MySQL
-import os
-
-app = Flask(__name__)
-
-# Secret key for session management
-app.secret_key = os.urandom(24)
-
-# MySQL Configuration
-app.config['MYSQL_HOST'] = 'localhost'  # or the host of your MySQL server
-app.config['MYSQL_USER'] = 'root'  # MySQL username
-app.config['MYSQL_PASSWORD'] = ''  # MySQL password
-app.config['MYSQL_DB'] = 'timer'  # The name of the database you created
-
-# Initialize MySQL
-mysql = MySQL(app)
-
-
-@app.route('/task.html')
-def task():
-    # Create a cursor to interact with the database
-    cur = mysql.connection.cursor()
-
-    # Retrieve tasks from the database
-    cur.execute("SELECT * FROM task")
-    tasks = cur.fetchall()  # Fetch all rows from the table
-
-    # Close the cursor
-    cur.close()
-
-    return render_template('task.html', tasks=tasks)
-
-
-@app.route('/add_task', methods=['POST'])
-def add_task():
-    task_id = request.form.get('task_id')
-    task_name = request.form.get('task_name')
-    priority = request.form.get('priority')
-
-    print(f"task_id: {task_id}, task_name: {task_name}, priority: {priority}")  # Debug print
-
-    # Validate input
-    if task_id and task_name:
-        # Create a cursor to interact with the database
-        cur = mysql.connection.cursor()
-
-        # Insert task into the database
-        cur.execute("INSERT INTO task (task_id, task_name, priority) VALUES (%s, %s, %s)",
-                    (task_id, task_name, priority))
-
-        # Commit changes to the database
-        mysql.connection.commit()
-
-        # Close the cursor
-        cur.close()
-
-    return redirect(url_for('task'))
-
-
-@app.route('/delete_task', methods=['POST'])
-def delete_task():
-    task_id = request.form.get('task_id')
-
-    if task_id:
-        # Create a cursor to interact with the database
-        cur = mysql.connection.cursor()
-
-        # Delete task from the database
-        cur.execute("DELETE FROM task WHERE task_id = %s", [task_id])
-
-        # Commit changes to the database
-        mysql.connection.commit()
-
-        # Close the cursor
-        cur.close()
-
-    return redirect(url_for('task'))
-
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-if __name__ == '__main__':
-    app.run(debug=True)'''
-
-
-
-
-
-
-
-
-
-
-
 
 '''from flask import Flask, render_template
 

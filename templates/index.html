@@ -21,6 +21,7 @@ https://templatemo.com/tm-520-highway
         <link rel="stylesheet" href="{{ url_for('static' , filename ='css/light-box.css')}} " />
 		<link rel="stylesheet" href="{{ url_for('static' , filename ='css/templatemo-style.css')}} " />
         <link rel="stylesheet" href="{{ url_for('static' , filename ='css/TimerStyle.css')}} " />
+         <link rel="stylesheet" href="{{ url_for('static' , filename ='css/log.css')}} " />
 
         <link href="https://fonts.googleapis.com/css?family=Kanit:100,200,300,400,500,600,700,800,900" rel="stylesheet">
 
@@ -58,7 +59,7 @@ https://templatemo.com/tm-520-highway
         <div class="container-fluid">
             <div class="col-md-4 col-sm-6">
                 <div class="portfolio-item">
-                    <a href="task.html" data-lightbox="image-1"><div class="thumb">
+                   <a href="{{ url_for('run_task') }}">Run Task</a>
                         <div class="hover-effect">
                             <div class="hover-content">
                                 <h1>TASK </h1>

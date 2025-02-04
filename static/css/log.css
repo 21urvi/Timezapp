@@ -1,0 +1,105 @@
+/* Reset default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+/* Center the login form */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f4f4f4;
+}
+
+/* Form container */
+.container {
+    background: #fff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    width: 350px;
+    text-align: center;
+}
+
+/* Title */
+h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+}
+
+/* Input field container */
+.input-box {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+/* Input fields */
+.input-box input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
+}
+
+/* Floating labels */
+.input-box label {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: #777;
+    transition: 0.3s ease-in-out;
+    pointer-events: none;
+}
+
+/* Move label up when input is active */
+.input-box input:focus + label,
+.input-box input:valid + label {
+    top: 5px;
+    font-size: 12px;
+    color: #007bff;
+}
+
+/* CAPTCHA image */
+.input-box img {
+    display: block;
+    margin: 10px auto;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Submit button */
+.btn {
+    width: 100%;
+    padding: 12px;
+    background: #007bff;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn:hover {
+    background: #0056b3;
+}
+
+/* Flash messages */
+p.success {
+    color: green;
+    font-weight: bold;
+}
+
+p.error {
+    color: red;
+    font-weight: bold;
+}

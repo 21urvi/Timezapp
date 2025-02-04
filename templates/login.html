@@ -1,4 +1,67 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+     <link rel="stylesheet" href="{{ url_for('static' , filename ='css/log.css')}} " />
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <p class="{{ category }}">{{ message }}</p>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="post">
+            <div class="input-box">
+                <input type="email" name="gmail" required>
+                <label>Gmail</label>
+            </div>
+
+            <div class="input-box">
+                <input type="password" name="password" required>
+                <label>Password</label>
+            </div>
+
+            <!-- ✅ Fixed CAPTCHA -->
+            <div class="input-box">
+                <img src="{{ url_for('captcha') }}" alt="CAPTCHA">
+                <input type="text" name="captcha" required>
+                <label>Enter CAPTCHA</label>
+            </div>
+
+            <button type="submit" class="btn">Login</button>
+        </form>
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--<html>
 <head>
 		<title>Login Form</title>
 		<meta charset="utf-8" />
@@ -85,5 +148,5 @@
 
     </div>
 </body>
-</html>
+</html>-->
 
