@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo List</title>
+    <title>Task</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -84,7 +84,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Todo List</h1>
+        <h1>Task</h1>
         <form id="taskForm" action="/add_task" method="POST">
             <input type="text" name="title" placeholder="Task Title" required>
             <input type="date" name="date" required>
@@ -102,7 +102,7 @@
                 <div>
                     <strong>Task ID: {{ task[0] }}</strong><br>
                     <strong>Task Name: </strong>{{ task[1] }}<br>
-                    <strong>Deadline: </strong>{{ task[2] }}<br>
+                    <strong>Task Date: </strong>{{ task[2] }}<br>
                     <strong>Priority: </strong>{{ task[3] }}<br>
                 </div>
                 <span class="delete-btn" onclick="deleteTask({{ task[0] }})">Delete</span>

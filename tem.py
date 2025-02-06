@@ -12,7 +12,7 @@ app.config['MYSQL_DB'] = 'timezap'
 
 mysql = MySQL(app)
 
-# Index route: Displays tasks
+'''# Index route: Displays tasks
 @app.route('/')
 def index():
     cur = mysql.connection.cursor()
@@ -59,7 +59,63 @@ def complete_task(task_id):
     mysql.connection.commit()
     cur.close()
 
-    return redirect(url_for('index'))
+    return redirect(url_for('index'))'''
+
+# Index route: Displays tasks
+@app.route('/')
+def index():
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM practical")
+        tasks = cur.fetchall()
+        cur.close()
+        return render_template('practical.html', tasks=tasks)
+    except Exception as e:
+        return f"Database error: {str(e)}"
+
+# Add task route
+@app.route('/add_task', methods=['POST'])
+def add_task():
+    if request.method == 'POST':
+        title = request.form['title']
+        task_date = datetime.strptime(request.form['date'], '%Y-%m-%d').date()
+        priority = request.form['priority']
+        status = 'Not Completed'
+
+        try:
+            cur = mysql.connection.cursor()
+            cur.execute("INSERT INTO practical(title, task_date, priority, status) VALUES(%s, %s, %s, %s)",
+                        (title, task_date, priority, status))
+            mysql.connection.commit()
+            cur.close()
+            return redirect(url_for('index'))
+        except Exception as e:
+            return f"Database error: {str(e)}"
+
+# Delete task route (AJAX Supported)
+@app.route('/delete_task/<int:p_id>', methods=['POST'])
+def delete_task(p_id):
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("DELETE FROM practical WHERE p_id = %s", (p_id,))
+        mysql.connection.commit()
+        cur.close()
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+# Update task status to Completed
+@app.route('/complete_task/<int:task_id>', methods=['POST'])
+def complete_task(p_id):
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE practical SET status = 'Completed' WHERE p_id = %s", (p_id,))
+        mysql.connection.commit()
+        cur.close()
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
