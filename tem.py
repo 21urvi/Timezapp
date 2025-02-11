@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+'''from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_mysqldb import MySQL
 from datetime import datetime
 
@@ -10,7 +10,7 @@ app.config['MYSQL_USER'] = 'root'  # your MySQL username
 app.config['MYSQL_PASSWORD'] = 'urvi2115'  # your MySQL password
 app.config['MYSQL_DB'] = 'timezap'
 
-mysql = MySQL(app)
+mysql = MySQL(app)'''
 
 '''# Index route: Displays tasks
 @app.route('/')
@@ -61,7 +61,7 @@ def complete_task(task_id):
 
     return redirect(url_for('index'))'''
 
-# Index route: Displays tasks
+'''# Index route: Displays Practical tasks
 @app.route('/')
 def index():
     try:
@@ -114,11 +114,115 @@ def complete_task(p_id):
         cur.close()
         return jsonify({'success': True})
     except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})'''
+'''# --------------------------------------------------------------------------------------subject specific
+@app.route('/')
+def index():
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM revision")
+        tasks = cur.fetchall()
+        cur.close()
+        return render_template('revision.html', tasks=tasks)
+    except Exception as e:
+        return f"Database error: {str(e)}"
+
+# Add task route
+@app.route('/add_task', methods=['POST'])
+def add_task():
+    if request.method == 'POST':
+        note = request.form['note']
+        task_date = datetime.strptime(request.form['task_date'], '%Y-%m-%d').date()
+        priority = request.form['priority']
+        revision_point = request.form.get('revision_point', 0)
+
+        # Default status value
+        status = 'Pending'
+
+        try:
+            cur = mysql.connection.cursor()
+            # Insert data into 'practical' table with the new fields
+            cur.execute(
+                "INSERT INTO revision(note, task_date, priority, status, revision_point) VALUES(%s, %s, %s, %s, %s)",
+                (note, task_date, priority, status, revision_point)
+            )
+            mysql.connection.commit()
+            cur.close()
+            return redirect(url_for('index'))
+        except Exception as e:
+            return f"Database error: {str(e)}"
+
+# Delete task route (AJAX Supported)
+@app.route('/delete_task/<int:r_id>', methods=['POST'])
+def delete_task(r_id):
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("DELETE FROM revision WHERE r_id = %s", (r_id,))
+        mysql.connection.commit()
+        cur.close()
+        return jsonify({'success': True})
+    except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
 
+# Update task status to Completed
+@app.route('/complete_task/<int:r_id>', methods=['POST'])
+def complete_task(r_id):
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE revision SET status = 'Completed' WHERE r_id = %s", (r_id,))
+        mysql.connection.commit()
+        cur.close()
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})'''
+
+'''@app.route('/')
+def index():
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("SELECT * FROM subject")
+        tasks = cur.fetchall()
+        cur.close()
+        return render_template('task_management.html', tasks=tasks)
+    except Exception as e:
+        return f"Database error: {str(e)}"
+
+# Add task route
+@app.route('/add_task', methods=['POST'])
+def add_task():
+    if request.method == 'POST':
+        subject = request.form['subject']
+        subject_task = request.form['subject_task']
+        task_data = request.form['task_data']
+        priority = request.form['priority']
+        status = request.form['status']  # Added status field
+
+        try:
+            cur = mysql.connection.cursor()
+            cur.execute(
+                "INSERT INTO subject (subject, subject_task, task_data, priority, status) VALUES (%s, %s, %s, %s, %s)",
+                (subject, subject_task, task_data, priority, status)
+            )
+            mysql.connection.commit()
+            cur.close()
+            return redirect(url_for('index'))
+        except Exception as e:
+            return f"Database error: {str(e)}"
+
+# Delete task route (AJAX Supported)
+@app.route('/delete_task/<int:s_id>', methods=['POST'])
+def delete_task(s_id):
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("DELETE FROM subject WHERE s_id = %s", (s_id,))
+        mysql.connection.commit()
+        cur.close()
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True)'''
 
 '''from flask import Flask, render_template, request, redirect, session, flash, url_for, send_file
 import mysql.connector
@@ -1016,7 +1120,7 @@ def long_break():
 if __name__ == '__main__':
     app.run(debug=True)'''
 
-'''from flask import Flask, render_template
+from flask import Flask, render_template
 
 app = Flask(__name__ , static_folder='static')
 
@@ -1029,32 +1133,16 @@ def welcome():
     return render_template('welcome.html')
 
 # Route for the homepage (index.html)
-@app.route('/')
+@app.route('/index.html')
 def index():
     return render_template('index.html')
 
-# Route for landing.html
-@app.route('/masonry.html')
-def masonry():
-    return render_template('masonry.html')
 
-@app.route('/single-post.html')
-def single():
-    return render_template('single-post.html')
-
-@app.route('/grid.html')
-def grid():
-    return render_template('grid.html')
-
-@app.route('/blog.html')
-def blog():
-    return render_template('blog.html')
-
-@app.route('/about.html')
+@app.route('/')
 def about():
-    return render_template('about.html')
+    return render_template('timer.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)'''
+    app.run(debug=True)
 
 

@@ -1,0 +1,394 @@
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Timer</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #ffcbcb, #fff2ac); /* Pastel Pink to Yellow */
+            margin: 0;
+        }
+        .timer-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 100%;
+            max-width: 420px;
+        }
+        h1 {
+            font-size: 26px;
+            color: #6b4226; /* Pastel Brown */
+            margin-bottom: 15px;
+        }
+        .timer {
+            font-size: 64px;
+            font-weight: bold;
+            color: #618264; /* Pastel Green */
+            margin: 25px 0;
+        }
+        .break-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        button {
+            padding: 12px 18px;
+            font-size: 18px;
+            background: linear-gradient(90deg, #89c2d9, #61a5c2); /* Pastel Blue */
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #61a5c2, #89c2d9);
+        }
+        .break-btn {
+            flex: 1;
+            background: linear-gradient(90deg, #ffabbb, #ff758c); /* Pastel Pink */
+            margin: 5px;
+        }
+        .break-btn:hover {
+            background: linear-gradient(90deg, #ff758c, #ffabbb);
+        }
+    </style>
+</head>
+<body>
+
+<div class="timer-container">
+    <h1>Pomodoro Timer</h1>
+
+    <div class="break-buttons">
+        <button class="break-btn" onclick="setShortBreak()">Short Break (5:00)</button>
+        <button class="break-btn" onclick="setLongBreak()">Long Break (15:00)</button>
+    </div>
+
+    <div class="timer" id="timer">25:00</div>
+
+    <div class="buttons">
+        <button onclick="startTimer()">Start</button>
+        <button onclick="stopTimer()">Stop</button>
+        <button onclick="resetTimer()">Reset</button>
+    </div>
+</div>
+
+<script>
+    let timer;
+    let timeLeft = 25 * 60;
+    let isRunning = false;
+
+    function updateTimerDisplay() {
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        document.getElementById("timer").textContent =
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function startTimer() {
+        if (!isRunning) {
+            isRunning = true;
+            timer = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    updateTimerDisplay();
+                } else {
+                    stopTimer();
+                }
+            }, 1000);
+        }
+    }
+
+    function stopTimer() {
+        clearInterval(timer);
+        isRunning = false;
+    }
+
+    function resetTimer() {
+        stopTimer();
+        timeLeft = 25 * 60;
+        updateTimerDisplay();
+    }
+
+    function setShortBreak() {
+        stopTimer();
+        timeLeft = 5 * 60;
+        updateTimerDisplay();
+    }
+
+    function setLongBreak() {
+        stopTimer();
+        timeLeft = 15 * 60;
+        updateTimerDisplay();
+    }
+
+    updateTimerDisplay();
+</script>
+
+</body>
+</html>-->
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Timer</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #b0e0e6, #fff2ac);
+            margin: 0;
+            position: relative;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            width: 400px;
+        }
+
+        .timer {
+            font-size: 64px;
+            font-weight: bold;
+            color: #618264;
+            margin: 25px 0;
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .break-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 12px 18px;
+            font-size: 18px;
+            background: linear-gradient(90deg, #6fa3ef, #3f8efc);
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #3f8efc, #6fa3ef);
+        }
+
+        /* Menu Section - Fixed in Right Corner */
+        .menu-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            text-align: right;
+        }
+
+        .menu-btn {
+            font-size: 20px;
+            background: #ff758c;
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 130px;
+        }
+
+        .menu-btn:hover {
+            background: #ff5c75;
+        }
+
+        .menu {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 220px;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu ul li {
+            padding: 12px;
+            background: #ffebbb;
+            margin: 5px 0;
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .menu ul li:hover {
+            background: #ffe18a;
+        }
+
+        /* Submenu */
+        .submenu {
+            display: none;
+            margin-top: 5px;
+        }
+
+        .submenu li {
+            font-size: 14px;
+            background: #fff0c9;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .menu-container {
+                right: 10px;
+                top: 10px;
+            }
+
+            .menu {
+                width: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Pomodoro Timer</h1>
+
+    <div class="break-buttons">
+        <button onclick="setShortBreak()">Short Break (5:00)</button>
+        <button onclick="setLongBreak()">Long Break (15:00)</button>
+    </div>
+
+    <div class="timer" id="timer">25:00</div>
+
+    <div class="buttons">
+        <button onclick="startTimer()">Start</button>
+        <button onclick="stopTimer()">Stop</button>
+        <button onclick="resetTimer()">Reset</button>
+    </div>
+</div>
+
+<!-- Fixed Menu on Right Corner -->
+<div class="menu-container">
+    <button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
+
+    <div class="menu" id="menu">
+        <ul>
+            <li onclick="toggleSubmenu()">📋 Schedule ▼</li>
+            <ul class="submenu" id="submenu">
+                <li>📌 Task</li>
+                <li>📘 Practical Problem</li>
+                <li>📖 Revision</li>
+                <li>📚 Subject Specific</li>
+                <li>📅 Exam Preparation</li>
+                <li>💬 Group Discussion</li>
+            </ul>
+            <li>📆 Calendar</li>
+            <li>📊 Progress</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    let timer;
+    let timeLeft = 25 * 60;
+    let isRunning = false;
+
+    function updateTimerDisplay() {
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        document.getElementById("timer").textContent =
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function startTimer() {
+        if (!isRunning) {
+            isRunning = true;
+            timer = setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    updateTimerDisplay();
+                } else {
+                    stopTimer();
+                }
+            }, 1000);
+        }
+    }
+
+    function stopTimer() {
+        clearInterval(timer);
+        isRunning = false;
+    }
+
+    function resetTimer() {
+        stopTimer();
+        timeLeft = 25 * 60;
+        updateTimerDisplay();
+    }
+
+    function setShortBreak() {
+        stopTimer();
+        timeLeft = 5 * 60;
+        updateTimerDisplay();
+    }
+
+    function setLongBreak() {
+        stopTimer();
+        timeLeft = 15 * 60;
+        updateTimerDisplay();
+    }
+
+    function toggleMenu() {
+        let menu = document.getElementById("menu");
+        menu.style.display = menu.style.display === "none" || menu.style.display === "" ? "block" : "none";
+    }
+
+    function toggleSubmenu() {
+        let submenu = document.getElementById("submenu");
+        submenu.style.display = submenu.style.display === "none" || submenu.style.display === "" ? "block" : "none";
+    }
+
+    updateTimerDisplay();
+</script>
+
+</body>
+</html>
