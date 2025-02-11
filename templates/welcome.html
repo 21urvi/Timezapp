@@ -1,34 +1,108 @@
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #d4a5a5, #f5e6e8);
+        }
+        .welcome-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 100%;
+            max-width: 350px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #f77f00;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+
+<div class="welcome-container">
+    <h2>Welcome, {{ user }}</h2>
+    <p>You have successfully logged in!</p>
+    <form action="{{ url_for('logout') }}" method="get">
+        <button type="submit">Logout</button>
+    </form>
+</div>
+
+</body>
+</html>-->
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Timezap</title>
-    <!-- Correct link to the external CSS file -->
-    <link rel="stylesheet" href="{{ url_for('static' , filename ='assets/css/styles.css')}} " />
+    <title>Welcome</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #89f7fe, #66a6ff);
+        }
+        .welcome-container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 100%;
+            max-width: 380px;
+        }
+        h2 {
+            color: #3f72af;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(90deg, #3f72af, #112d4e);
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #112d4e, #3f72af);
+        }
+    </style>
 </head>
 <body>
-    <div class="gradient-background"></div>
-    <div class="splash-screen">
-        <div class="content">
-            <h1>Welcome to Timezap</h1>
-            <h4>
-           <ul >
-            <li><img src="{{ url_for('static', filename='images/ic1.jpg') }}" alt="Task Icon">Create Tasks Quickly and Easily</li>
-            <li><img src="{{ url_for('static', filename='images/ic2.jpg') }}" alt="Reminder Icon">Set Time For Task</li>
-            <li><img src="{{ url_for('static', filename='images/ic6.jpg') }}" alt="Widget Icon">Custom Task</li>
-            <li><img src="{{ url_for('static', filename='images/ic5.jpg') }}" alt="Theme Icon">View Progress</li>
-          </ul>
-            </h4>
-            <p>If you want to start your task, then click below...</p>
-            <button class="start-button" onclick="redirectToNextPage()">Start Task</button>
-        </div>
-    </div>
 
-    <script>
-        function redirectToNextPage() {
-            window.location.href = "index.html"; // Redirect to the next page
-        }
-    </script>
+<div class="welcome-container">
+    <h2>Welcome, {{ user }}</h2>
+    <p>You have successfully logged in!</p>
+    <form action="{{ url_for('logout') }}" method="get">
+        <button type="submit">Next</button>
+    </form>
+</div>
+
 </body>
 </html>
