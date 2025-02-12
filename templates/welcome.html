@@ -1,4 +1,4 @@
-<!--<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -11,28 +11,54 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background: linear-gradient(135deg, #d4a5a5, #f5e6e8);
+            background: radial-gradient(circle, #6d28d9, #3b0764);
+            overflow: hidden;
+            margin: 0;
         }
+
+        /* Floating Animation */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
         .welcome-container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 15px;
             text-align: center;
-            width: 100%;
-            max-width: 350px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            color: white;
+            animation: float 3s ease-in-out infinite;
         }
+
+        h2 {
+            font-size: 26px;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
         button {
             width: 100%;
-            padding: 10px;
-            background-color: #f77f00;
+            padding: 12px;
+            background: linear-gradient(90deg, #a855f7, #6d28d9);
             color: white;
             border: none;
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: 10px;
+            font-size: 18px;
+            transition: 0.3s;
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.8);
+            margin-bottom: 10px;
         }
+
         button:hover {
-            background-color: #dc3545;
+            background: linear-gradient(90deg, #6d28d9, #a855f7);
+            transform: scale(1.05);
         }
     </style>
 </head>
@@ -40,18 +66,23 @@
 
 <div class="welcome-container">
     <h2>Welcome, {{ user }}</h2>
-    <p>You have successfully logged in!</p>
+
+    <!-- Next Button: Moves to Timer Page -->
+    <form method="POST">
+        <button type="submit">Next</button>
+    </form>
+
+    <!-- Logout Button -->
     <form action="{{ url_for('logout') }}" method="get">
         <button type="submit">Logout</button>
     </form>
 </div>
 
 </body>
-</html>-->
+</html>
 
 
-
-<!DOCTYPE html>
+<!--<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -106,3 +137,4 @@
 
 </body>
 </html>
+-->

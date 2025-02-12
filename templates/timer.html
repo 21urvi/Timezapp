@@ -1,82 +1,42 @@
-<!--<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pomodoro Timer</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: linear-gradient(135deg, #ffcbcb, #fff2ac); /* Pastel Pink to Yellow */
-            margin: 0;
-        }
-        .timer-container {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            width: 100%;
-            max-width: 420px;
-        }
-        h1 {
-            font-size: 26px;
-            color: #6b4226; /* Pastel Brown */
-            margin-bottom: 15px;
-        }
-        .timer {
-            font-size: 64px;
-            font-weight: bold;
-            color: #618264; /* Pastel Green */
-            margin: 25px 0;
-        }
-        .break-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        .buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-        }
-        button {
-            padding: 12px 18px;
-            font-size: 18px;
-            background: linear-gradient(90deg, #89c2d9, #61a5c2); /* Pastel Blue */
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: 0.3s;
-        }
-        button:hover {
-            background: linear-gradient(90deg, #61a5c2, #89c2d9);
-        }
-        .break-btn {
-            flex: 1;
-            background: linear-gradient(90deg, #ffabbb, #ff758c); /* Pastel Pink */
-            margin: 5px;
-        }
-        .break-btn:hover {
-            background: linear-gradient(90deg, #ff758c, #ffabbb);
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
+<!-- Menu Button -->
+<div class="menu-container">
+    <button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
+
+    <div class="menu" id="menu">
+        <ul>
+            <li onclick="toggleSubmenu()">📋 Schedule ▼</li>
+            <ul class="submenu" id="submenu">
+                <li>📌 Task</li>
+                <li>📘 Practical Problem</li>
+                <li>📖 Revision</li>
+                <li>📚 Subject Specific</li>
+                <li>📅 Exam Preparation</li>
+                <li>💬 Group Discussion</li>
+            </ul>
+            <li>📆 Calendar</li>
+            <li>📊 Progress</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Timer Container -->
 <div class="timer-container">
     <h1>Pomodoro Timer</h1>
 
     <div class="break-buttons">
-        <button class="break-btn" onclick="setShortBreak()">Short Break (5:00)</button>
-        <button class="break-btn" onclick="setLongBreak()">Long Break (15:00)</button>
+        <button onclick="setShortBreak()">Short Break (5:00)</button>
+        <button onclick="setLongBreak()">Long Break (15:00)</button>
+        <button onclick="addMinute()">+1 Min</button>
     </div>
 
     <div class="timer" id="timer">25:00</div>
@@ -137,21 +97,60 @@
         updateTimerDisplay();
     }
 
+    function addMinute() {
+        timeLeft += 60;
+        updateTimerDisplay();
+    }
+
     updateTimerDisplay();
+
+    // Menu Functions
+    function toggleMenu() {
+        let menu = document.getElementById("menu");
+        menu.style.display = menu.style.display === "block" ? "none" : "block";
+    }
+
+    function toggleSubmenu() {
+        let submenu = document.getElementById("submenu");
+        submenu.style.display = submenu.style.display === "block" ? "none" : "block";
+    }
 </script>
 
 </body>
-</html>-->
+</html>
 
 
 
 
-<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pomodoro Timer</title>
+    <title>Animated Pomodoro Timer</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -162,6 +161,14 @@
             background: linear-gradient(135deg, #b0e0e6, #fff2ac);
             margin: 0;
             position: relative;
+            overflow: hidden;
+        }
+
+        /* Floating Animation for Timer */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
         }
 
         .container {
@@ -171,13 +178,16 @@
             border-radius: 12px;
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
             width: 400px;
+            animation: float 3s ease-in-out infinite;
         }
 
+        /* Timer Glow Effect */
         .timer {
             font-size: 64px;
             font-weight: bold;
             color: #618264;
             margin: 25px 0;
+            text-shadow: 0 0 10px rgba(97, 130, 100, 0.8);
         }
 
         .buttons {
@@ -194,6 +204,13 @@
             margin-bottom: 15px;
         }
 
+        /* Buttons Glow Effect */
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px rgba(111, 163, 239, 0.5); }
+            50% { box-shadow: 0 0 15px rgba(111, 163, 239, 0.8); }
+            100% { box-shadow: 0 0 5px rgba(111, 163, 239, 0.5); }
+        }
+
         button {
             padding: 12px 18px;
             font-size: 18px;
@@ -203,18 +220,26 @@
             cursor: pointer;
             border-radius: 8px;
             transition: 0.3s;
+            animation: glow 2s infinite alternate;
         }
 
         button:hover {
             background: linear-gradient(90deg, #3f8efc, #6fa3ef);
+            transform: scale(1.05);
         }
 
-        /* Menu Section - Fixed in Right Corner */
+        /* Slide-in Menu Animation */
+        @keyframes slide-in {
+            from { transform: translateX(100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
         .menu-container {
             position: fixed;
             top: 20px;
             right: 20px;
             text-align: right;
+            animation: slide-in 0.5s ease-out;
         }
 
         .menu-btn {
@@ -264,10 +289,16 @@
             background: #ffe18a;
         }
 
-        /* Submenu */
+        /* Submenu Fade-In */
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .submenu {
             display: none;
             margin-top: 5px;
+            animation: fade-in 0.3s ease-in-out;
         }
 
         .submenu li {
@@ -307,7 +338,7 @@
     </div>
 </div>
 
-<!-- Fixed Menu on Right Corner -->
+
 <div class="menu-container">
     <button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
 
@@ -365,30 +396,16 @@
         updateTimerDisplay();
     }
 
-    function setShortBreak() {
-        stopTimer();
-        timeLeft = 5 * 60;
-        updateTimerDisplay();
-    }
-
-    function setLongBreak() {
-        stopTimer();
-        timeLeft = 15 * 60;
-        updateTimerDisplay();
-    }
-
     function toggleMenu() {
-        let menu = document.getElementById("menu");
-        menu.style.display = menu.style.display === "none" || menu.style.display === "" ? "block" : "none";
+        document.getElementById("menu").style.display ^= "block";
     }
 
     function toggleSubmenu() {
-        let submenu = document.getElementById("submenu");
-        submenu.style.display = submenu.style.display === "none" || submenu.style.display === "" ? "block" : "none";
+        document.getElementById("submenu").style.display ^= "block";
     }
 
     updateTimerDisplay();
 </script>
 
 </body>
-</html>
+</html>-->

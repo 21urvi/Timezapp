@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="menu-container">
+    <button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
+
+    <div class="menu" id="menu">
+        <ul>
+            <li onclick="toggleSubmenu()">📋 Schedule ▼</li>
+            <ul class="submenu" id="submenu">
+                <li>📌 Task</li>
+                <li>📘 Practical Problem</li>
+                <li>📖 Revision</li>
+                <li>📚 Subject Specific</li>
+                <li>📅 Exam Preparation</li>
+                <li>💬 Group Discussion</li>
+            </ul>
+            <li>📆 Calendar</li>
+            <li>📊 Progress</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    function toggleMenu() {
+        let menu = document.getElementById("menu");
+        menu.style.display = menu.style.display === "block" ? "none" : "block";
+    }
+
+    function toggleSubmenu() {
+        let submenu = document.getElementById("submenu");
+        submenu.style.display = submenu.style.display === "block" ? "none" : "block";
+    }
+</script>
+
+</body>
+</html>
