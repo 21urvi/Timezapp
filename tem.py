@@ -1120,29 +1120,120 @@ def long_break():
 if __name__ == '__main__':
     app.run(debug=True)'''
 
-from flask import Flask, render_template
+'''from flask import Flask, render_template, request, jsonify
+import mysql.connector
 
-app = Flask(__name__ , static_folder='static')
+app = Flask(__name__)
 
-@app.route('/login.html')
-def login():
-    return render_template('login.html')
-
-@app.route('/welcome.html')
-def welcome():
-    return render_template('welcome.html')
-
-# Route for the homepage (index.html)
-@app.route('/index.html')
-def index():
-    return render_template('index.html')
+# MySQL Database Connection
+db = mysql.connector.connect(
+    host="localhost",
+    user="root",  # Change this if needed
+    password="urvi2115",  # Update with your MySQL password
+    database="timezap"
+)
+cursor = db.cursor()
 
 
+# Home Route - Show Tasks
 @app.route('/')
-def about():
-    return render_template('timer.html')
+def index():
+    cursor.execute("SELECT * FROM tasks")
+    tasks = cursor.fetchall()
+    return render_template('tasks.html', tasks=tasks)
 
-if __name__ == '__main__':
+
+# Add Task Route (AJAX)
+@app.route('/add', methods=['POST'])
+def add_task():
+    task_name = request.form['task_name']
+    date = request.form['date']
+    priority = request.form['priority']
+    status = request.form['status']
+
+    cursor.execute("INSERT INTO tasks (task_name, date, priority, status) VALUES (%s, %s, %s, %s)",
+                   (task_name, date, priority, status))
+    db.commit()
+
+    cursor.execute("SELECT * FROM tasks ORDER BY task_id DESC LIMIT 1")  # Get last inserted task
+    new_task = cursor.fetchone()
+
+    return jsonify({
+        "task_id": new_task[0],
+        "task_name": new_task[1],
+        "date": new_task[2],
+        "priority": new_task[3],
+        "status": new_task[4]
+    })
+
+
+# Delete Task Route (AJAX)
+@app.route('/delete/<int:task_id>', methods=['DELETE'])
+def delete_task(task_id):
+    cursor.execute("DELETE FROM tasks WHERE task_id = %s", (task_id,))
+    db.commit()
+    return jsonify({"message": "Task deleted", "task_id": task_id})
+
+
+if __name__ == "__main__":
+    app.run(debug=True)'''
+
+
+from flask import Flask, render_template, request, jsonify, redirect, url_for
+import mysql.connector
+
+app = Flask(__name__)
+
+# MySQL Database Connection
+db = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="urvi2115",
+    database="timezap"
+)
+cursor = db.cursor()
+
+# Home Route (Task Page)
+@app.route("/")
+def home():
+    cursor.execute("SELECT * FROM tasks")
+    tasks = cursor.fetchall()
+    return render_template("tasks.html", tasks=tasks)
+
+# Timer Page
+@app.route("/timer/<int:task_id>")
+def timer(task_id):
+    cursor.execute("SELECT * FROM tasks WHERE task_id = %s", (task_id,))
+    task = cursor.fetchone()
+    if task:
+        return render_template("timer.html", task=task)
+    return redirect(url_for("home"))
+
+# Add Task Route
+@app.route("/add", methods=["POST"])
+def add_task():
+    data = request.form
+    cursor.execute("INSERT INTO tasks (task_name, date, priority, status) VALUES (%s, %s, %s, 'Incomplete')",
+                   (data["task_name"], data["date"], data["priority"]))
+    db.commit()
+    return redirect(url_for("home"))
+
+# Delete Task Route
+@app.route("/delete/<int:task_id>", methods=["DELETE"])
+def delete_task(task_id):
+    cursor.execute("DELETE FROM tasks WHERE task_id = %s", (task_id,))
+    db.commit()
+    return jsonify(success=True)
+
+# Update Task Status Route
+@app.route("/update_status", methods=["POST"])
+def update_status():
+    data = request.json
+    cursor.execute("UPDATE tasks SET status = %s WHERE task_id = %s", (data["status"], data["task_id"]))
+    db.commit()
+    return jsonify(success=True)
+
+if __name__ == "__main__":
     app.run(debug=True)
 
 

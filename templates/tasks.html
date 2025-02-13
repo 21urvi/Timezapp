@@ -3,46 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Management</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-<body>
-    <div class="container">
-        <h2>Task Management</h2>
+<body class="bg-light">
 
-        <!-- Task Form -->
-        <form id="taskForm" method="POST">
-            <input type="text" name="task_name" placeholder="Enter Task Name" required>
-            <input type="date" name="date" required>
-            <select name="priority" required>
-                <option value="" disabled selected>Select Priority</option>
-                <option value="High">High</option>
-                <option value="Medium">Medium</option>
-                <option value="Low">Low</option>
-            </select>
-            <select name="status" required>
-                <option value="" disabled selected>Select Status</option>
-                <option value="Pending">Pending</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Completed">Completed</option>
-            </select>
-            <button type="submit">Add Task</button>
-        </form>
+<div class="container mt-5">
+    <h2 class="text-center">To-Do List</h2>
 
-        <!-- Task List -->
-        <div id="taskList">
-            {% for task in tasks %}
-            <div class="task-item">
-                <p><strong>Task:</strong> {{ task.task_name }}</p>
-                <p><strong>Date:</strong> {{ task.date }}</p>
-                <p><strong>Priority:</strong> {{ task.priority }}</p>
-                <p><strong>Status:</strong> {{ task.status }}</p>
-                <form method="POST" action="{{ url_for('delete_task', task_id=task.task_id) }}">
-                    <button type="submit" class="delete-btn">Delete</button>
-                </form>
+    <!-- Add Task Form -->
+    <form id="taskForm" class="mb-4" method="POST" action="/add">
+        <div class="row">
+            <div class="col-md-3">
+                <input type="text" name="task_name" class="form-control" placeholder="Task Name" required>
             </div>
-            {% endfor %}
+            <div class="col-md-3">
+                <input type="date" name="date" class="form-control" required>
+            </div>
+            <div class="col-md-2">
+                <select name="priority" class="form-control">
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary">Add Task</button>
+            </div>
         </div>
-    </div>
+    </form>
+
+    <!-- Task List Table -->
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Task</th>
+                <th>Date</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="taskTableBody">
+            {% for task in tasks %}
+            <tr id="task-{{ task[0] }}">
+                <td>{{ task[0] }}</td>
+                <td>{{ task[1] }}</td>
+                <td>{{ task[2] }}</td>
+                <td>{{ task[3] }}</td>
+                <td id="status-{{ task[0] }}">{{ task[4] }}</td>
+                <td>
+                    <a href="/timer/{{ task[0] }}" class="btn btn-success btn-sm">Start Timer</a>
+                    <button class="btn btn-danger btn-sm delete-task" data-id="{{ task[0] }}">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+$(document).ready(function () {
+    // Delete Task AJAX
+    $(document).on("click", ".delete-task", function () {
+        let taskId = $(this).data("id");
+        $.ajax({
+            url: `/delete/${taskId}`,
+            type: "DELETE",
+            success: function () {
+                location.reload();
+            }
+        });
+    });
+});
+</script>
+
 </body>
 </html>
+
+
+
+
+
+
+
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <h2 class="text-center">To-Do List</h2>
+
+
+    <form id="taskForm" class="mb-4">
+        <div class="row">
+            <div class="col-md-3">
+                <input type="text" id="task_name" class="form-control" placeholder="Task Name" required>
+            </div>
+            <div class="col-md-3">
+                <input type="date" id="date" class="form-control" required>
+            </div>
+            <div class="col-md-2">
+                <select id="priority" class="form-control">
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select id="status" class="form-control">
+                    <option value="Pending">Pending</option>
+                    <option value="Completed">Completed</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary">Add Task</button>
+            </div>
+        </div>
+    </form>
+
+
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Task</th>
+                <th>Date</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="taskTableBody">
+            {% for task in tasks %}
+            <tr id="task-{{ task[0] }}">
+                <td>{{ task[0] }}</td>
+                <td>{{ task[1] }}</td>
+                <td>{{ task[2] }}</td>
+                <td>{{ task[3] }}</td>
+                <td>{{ task[4] }}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm delete-task" data-id="{{ task[0] }}">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+$(document).ready(function () {
+    // Add Task AJAX
+    $("#taskForm").submit(function (event) {
+        event.preventDefault(); // Prevent form refresh
+
+        let taskData = {
+            task_name: $("#task_name").val(),
+            date: $("#date").val(),
+            priority: $("#priority").val(),
+            status: $("#status").val()
+        };
+
+        $.post("/add", taskData, function (response) {
+            let newRow = `<tr id="task-${response.task_id}">
+                <td>${response.task_id}</td>
+                <td>${response.task_name}</td>
+                <td>${response.date}</td>
+                <td>${response.priority}</td>
+                <td>${response.status}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm delete-task" data-id="${response.task_id}">Delete</button>
+                </td>
+            </tr>`;
+
+            $("#taskTableBody").prepend(newRow); // Add new task to table
+
+            // Clear form fields
+            $("#task_name").val("");
+            $("#date").val("");
+            $("#priority").val("High");
+            $("#status").val("Pending");
+        });
+    });
+
+    // Delete Task AJAX
+    $(document).on("click", ".delete-task", function () {
+        let taskId = $(this).data("id");
+
+        $.ajax({
+            url: `/delete/${taskId}`,
+            type: "DELETE",
+            success: function () {
+                $(`#task-${taskId}`).remove(); // Remove task from table
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>-->
