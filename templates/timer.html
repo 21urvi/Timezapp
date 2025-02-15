@@ -1,136 +1,14 @@
-<!--<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pomodoro Timer</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-
-<div class="menu-container">
-    <button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
-
-    <div class="menu" id="menu">
-        <ul>
-            <li onclick="toggleSubmenu()">📋 Schedule ▼</li>
-            <ul class="submenu" id="submenu">
-                <li>📌 Task</li>
-                <li>📘 Practical Problem</li>
-                <li>📖 Revision</li>
-                <li>📚 Subject Specific</li>
-                <li>📅 Exam Preparation</li>
-                <li>💬 Group Discussion</li>
-            </ul>
-            <li>📆 Calendar</li>
-            <li>📊 Progress</li>
-        </ul>
-    </div>
-</div>
-
-<div class="timer-container">
-    <h1>Pomodoro Timer</h1>
-
-    <div class="break-buttons">
-        <button onclick="setShortBreak()">Short Break (5:00)</button>
-        <button onclick="setLongBreak()">Long Break (15:00)</button>
-        <button onclick="addMinute()">+1 Min</button>
-    </div>
-
-    <div class="timer" id="timer">25:00</div>
-
-    <div class="buttons">
-        <button onclick="startTimer()">Start</button>
-        <button onclick="stopTimer()">Stop</button>
-        <button onclick="resetTimer()">Reset</button>
-    </div>
-</div>
-
-<script>
-    let timer;
-    let timeLeft = 25 * 60;
-    let isRunning = false;
-
-    function updateTimerDisplay() {
-        let minutes = Math.floor(timeLeft / 60);
-        let seconds = timeLeft % 60;
-        document.getElementById("timer").textContent =
-            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    }
-
-    function startTimer() {
-        if (!isRunning) {
-            isRunning = true;
-            timer = setInterval(() => {
-                if (timeLeft > 0) {
-                    timeLeft--;
-                    updateTimerDisplay();
-                } else {
-                    stopTimer();
-                }
-            }, 1000);
-        }
-    }
-
-    function stopTimer() {
-        clearInterval(timer);
-        isRunning = false;
-    }
-
-    function resetTimer() {
-        stopTimer();
-        timeLeft = 25 * 60;
-        updateTimerDisplay();
-    }
-
-    function setShortBreak() {
-        stopTimer();
-        timeLeft = 5 * 60;
-        updateTimerDisplay();
-    }
-
-    function setLongBreak() {
-        stopTimer();
-        timeLeft = 15 * 60;
-        updateTimerDisplay();
-    }
-
-    function addMinute() {
-        timeLeft += 60;
-        updateTimerDisplay();
-    }
-
-    updateTimerDisplay();
-
-    // Menu Functions
-    function toggleMenu() {
-        let menu = document.getElementById("menu");
-        menu.style.display = menu.style.display === "block" ? "none" : "block";
-    }
-
-    function toggleSubmenu() {
-        let submenu = document.getElementById("submenu");
-        submenu.style.display = submenu.style.display === "block" ? "none" : "block";
-    }
-</script>
-
-</body>
-</html>-->
-
-
-
-
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pomodoro Timer</title>
+    <title>Timer</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-
+{% include 'menu.html' %}
 <div class="menu-container">
     <button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
 
@@ -262,6 +140,9 @@
     function toggleSubmenu() {
         let submenu = document.getElementById("submenu");
         submenu.style.display = submenu.style.display === "block" ? "none" : "block";
+    }
+    function goBack() {
+        window.location.href = "/otimer";
     }
 </script>
 

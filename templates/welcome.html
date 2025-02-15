@@ -24,14 +24,14 @@
         }
 
         .welcome-container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
             padding: 30px;
             border-radius: 15px;
             text-align: center;
             width: 90%;
             max-width: 400px;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
             color: white;
             animation: float 3s ease-in-out infinite;
         }
@@ -40,6 +40,12 @@
             font-size: 26px;
             color: #fff;
             margin-bottom: 20px;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
         button {
@@ -53,7 +59,7 @@
             font-size: 18px;
             transition: 0.3s;
             box-shadow: 0 0 10px rgba(168, 85, 247, 0.8);
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
 
         button:hover {
@@ -67,19 +73,22 @@
 <div class="welcome-container">
     <h2>Welcome, {{ user }}</h2>
 
-    <!-- Next Button: Moves to Timer Page -->
-    <form method="POST">
-        <button type="submit">Next</button>
-    </form>
+    <div class="button-container">
+        <!-- Next Button: Moves to Timer Page -->
+        <form action="{{ url_for('otimer') }}" method="get">
+            <button type="submit">Next</button>
+        </form>
 
-    <!-- Logout Button -->
-    <form action="{{ url_for('logout') }}" method="get">
-        <button type="submit">Logout</button>
-    </form>
+        <!-- Logout Button -->
+        <form action="{{ url_for('logout') }}" method="get">
+            <button type="submit">Logout</button>
+        </form>
+    </div>
 </div>
 
 </body>
 </html>
+
 
 
 <!--<!DOCTYPE html>

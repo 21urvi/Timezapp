@@ -8,37 +8,61 @@
 </head>
 <body>
 
-<div class="menu-container">
-    <button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
-
-    <div class="menu" id="menu">
-        <ul>
-            <li onclick="toggleSubmenu()">📋 Schedule ▼</li>
-            <ul class="submenu" id="submenu">
-                <li>📌 Task</li>
-                <li>📘 Practical Problem</li>
-                <li>📖 Revision</li>
-                <li>📚 Subject Specific</li>
-                <li>📅 Exam Preparation</li>
-                <li>💬 Group Discussion</li>
-            </ul>
-            <li>📆 Calendar</li>
-            <li>📊 Progress</li>
+<div class="menu" id="menu">
+    <ul>
+        <li onclick="toggleSubmenu()">📋 Schedule ▼</li>
+        <ul class="submenu" id="submenu">
+            <li onclick="navigateTo('/tasks')">📌 Task</li>
+            <li onclick="navigateTo('/practical')">📘 Practical Problem</li>
+            <li onclick="navigateTo('/revision')">📖 Revision</li>
+            <li onclick="navigateTo('/subject')">📚 Subject Specific</li>
+            <li onclick="navigateTo('/exam')">📅 Exam Preparation</li>
+            <li onclick="navigateTo('/discussion')">💬 Group Discussion</li>
         </ul>
-    </div>
+        <li onclick="navigateTo('/calendar')">📆 Calendar</li>
+        <li onclick="navigateTo('/progress')">📊 Progress</li>
+    </ul>
 </div>
 
 <script>
-    function toggleMenu() {
-        let menu = document.getElementById("menu");
-        menu.style.display = menu.style.display === "block" ? "none" : "block";
+    function toggleSubmenu() {
+        var submenu = document.getElementById("submenu");
+        submenu.style.display = submenu.style.display === "none" ? "block" : "none";
     }
 
-    function toggleSubmenu() {
-        let submenu = document.getElementById("submenu");
-        submenu.style.display = submenu.style.display === "block" ? "none" : "block";
+    function navigateTo(page) {
+        window.location.href = page;
     }
 </script>
+
+<style>
+    .menu ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .menu ul li {
+        background: #007bff;
+        color: white;
+        padding: 10px;
+        cursor: pointer;
+        border-bottom: 1px solid white;
+    }
+
+    .menu ul li:hover {
+        background: #0056b3;
+    }
+
+    .submenu {
+        display: none;
+        padding-left: 15px;
+    }
+
+    .submenu li {
+        background: #0056b3;
+    }
+</style>
 
 </body>
 </html>
