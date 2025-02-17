@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,27 +7,39 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-{% include 'menu.html' %}
+
+<!-- Menu Section -->
 <div class="menu-container">
     <button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
 
-   <div class="menu" id="menu">
-    <ul>
-        <li onclick="toggleSubmenu()">📋 Schedule ▼</li>
-        <ul class="submenu" id="submenu">
-            <li onclick="navigateTo('/tasks')">📌 Task</li>
-            <li onclick="navigateTo('/practical')">📘 Practical Problem</li>
-            <li onclick="navigateTo('/revision')">📖 Revision</li>
-            <li onclick="navigateTo('/subject')">📚 Subject Specific</li>
-            <li onclick="navigateTo('/exam')">📅 Exam Preparation</li>
-            <li onclick="navigateTo('/discussion')">💬 Group Discussion</li>
+    <div class="menu" id="menu" style="display: none;">
+        <ul>
+            <li onclick="toggleSubmenu()">📋 Schedule ▼</li>
+            <ul class="submenu" id="submenu" style="display: none;">
+                <li onclick="navigateTo('/tasks')">📌 Task</li>
+                <li onclick="navigateTo('/practical')">📘 Practical Problem</li>
+                <li onclick="navigateTo('/revision')">📖 Revision</li>
+                <li onclick="navigateTo('/subject')">📚 Subject Specific</li>
+                <li onclick="navigateTo('/exam')">📅 Exam Preparation</li>
+                <li onclick="navigateTo('/discussion')">💬 Group Discussion</li>
+            </ul>
+            <li onclick="navigateTo('/calendar')">📆 Calendar</li>
+            <li onclick="navigateTo('/progress')">📊 Progress</li>
+
+            <!-- 🎵 Background Music Option -->
+            <li onclick="toggleAudioSubmenu()">🎵 Background Music ▼</li>
+                <ul class="submenu" id="audio-submenu" style="display: none;">
+                    <li onclick="changeAudio('{{ url_for('static', filename='audio/Magical-Moments-chosic.com_.mp3') }}')">🎶 Relaxing Music</li>
+                    <li onclick="changeAudio('{{ url_for('static', filename='audio/mixkit-harp-relax-669.mp3') }}')">🎵 Focus Beats</li>
+                    <li onclick="changeAudio('{{ url_for('static', filename='audio/Transcendence-chosic.com_.mp3') }}')">🌿 Nature Sounds</li>
+                    <li onclick="changeAudio('none')">🚫 Stop Music</li>
+                </ul>
+
         </ul>
-        <li onclick="navigateTo('/calendar')">📆 Calendar</li>
-        <li onclick="navigateTo('/progress')">📊 Progress</li>
-    </ul>
-</div>
+    </div>
 </div>
 
+<!-- Timer Section -->
 <div class="timer-container">
     <h1>Pomodoro Timer</h1>
 
@@ -45,14 +56,19 @@
         <button onclick="stopTimer()">Stop</button>
         <button onclick="resetTimer()">Reset</button>
     </div>
+</div>
 
-   </div>
+<!-- Background Music -->
+<audio id="bg-audio" loop>
+    <source src="" type="audio/mpeg">
+</audio>
 
+<!-- JavaScript -->
 <script>
     let timer;
     let timeLeft = 25 * 60;
     let isRunning = false;
-    let isCompleted = false;
+    let audio = document.getElementById("bg-audio");
 
     function updateTimerDisplay() {
         let minutes = Math.floor(timeLeft / 60);
@@ -64,14 +80,13 @@
     function startTimer() {
         if (!isRunning) {
             isRunning = true;
+            if (audio.src) audio.play();
             timer = setInterval(() => {
                 if (timeLeft > 0) {
                     timeLeft--;
                     updateTimerDisplay();
                 } else {
                     stopTimer();
-                    isCompleted = true;
-                    updateTaskStatus("Completed");
                 }
             }, 1000);
         }
@@ -80,14 +95,14 @@
     function stopTimer() {
         clearInterval(timer);
         isRunning = false;
-        document.getElementById("statusButton").style.display = "block";
+        audio.pause();
     }
 
     function resetTimer() {
         stopTimer();
         timeLeft = 25 * 60;
         updateTimerDisplay();
-        document.getElementById("statusButton").style.display = "none";
+        audio.currentTime = 0;
     }
 
     function setShortBreak() {
@@ -107,15 +122,6 @@
         updateTimerDisplay();
     }
 
-    function redirectToTasks() {
-        let status = isCompleted ? "Completed" : "Incomplete";
-        updateTaskStatus(status);
-    }
-
-
-    updateTimerDisplay();
-
-    // Menu Functions
     function toggleMenu() {
         let menu = document.getElementById("menu");
         menu.style.display = menu.style.display === "block" ? "none" : "block";
@@ -126,6 +132,27 @@
         submenu.style.display = submenu.style.display === "block" ? "none" : "block";
     }
 
+    function toggleAudioSubmenu() {
+        let audioSubmenu = document.getElementById("audio-submenu");
+        audioSubmenu.style.display = audioSubmenu.style.display === "block" ? "none" : "block";
+    }
+
+    function changeAudio(track) {
+        if (track === "none") {
+            audio.pause();
+            audio.src = "";
+        } else {
+            audio.src = track;
+            audio.load();
+            audio.play();
+        }
+    }
+
+    function navigateTo(url) {
+        window.location.href = url;
+    }
+
+    updateTimerDisplay();
 </script>
 
 </body>

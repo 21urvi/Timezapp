@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,27 +7,39 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-{% include 'menu.html' %}
+
+<!-- Menu Section -->
 <div class="menu-container">
     <button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
 
-    <div class="menu" id="menu">
+    <div class="menu" id="menu" style="display: none;">
         <ul>
             <li onclick="toggleSubmenu()">📋 Schedule ▼</li>
-            <ul class="submenu" id="submenu">
-                <li>📌 Task</li>
-                <li>📘 Practical Problem</li>
-                <li>📖 Revision</li>
-                <li>📚 Subject Specific</li>
-                <li>📅 Exam Preparation</li>
-                <li>💬 Group Discussion</li>
+            <ul class="submenu" id="submenu" style="display: none;">
+                <li onclick="navigateTo('/tasks')">📌 Task</li>
+                <li onclick="navigateTo('/practical')">📘 Practical Problem</li>
+                <li onclick="navigateTo('/revision')">📖 Revision</li>
+                <li onclick="navigateTo('/subject')">📚 Subject Specific</li>
+                <li onclick="navigateTo('/exam')">📅 Exam Preparation</li>
+                <li onclick="navigateTo('/discussion')">💬 Group Discussion</li>
             </ul>
-            <li>📆 Calendar</li>
-            <li>📊 Progress</li>
+            <li onclick="navigateTo('/calendar')">📆 Calendar</li>
+            <li onclick="navigateTo('/progress')">📊 Progress</li>
+
+            <!-- 🎵 Background Music Option -->
+            <li onclick="toggleAudioSubmenu()">🎵 Background Music ▼</li>
+                <ul class="submenu" id="audio-submenu" style="display: none;">
+                    <li onclick="changeAudio('{{ url_for('static', filename='audio/Magical-Moments-chosic.com_.mp3') }}')">🎶 Relaxing Music</li>
+                    <li onclick="changeAudio('{{ url_for('static', filename='audio/mixkit-harp-relax-669.mp3') }}')">🎵 Focus Beats</li>
+                    <li onclick="changeAudio('{{ url_for('static', filename='audio/Transcendence-chosic.com_.mp3') }}')">🌿 Nature Sounds</li>
+                    <li onclick="changeAudio('none')">🚫 Stop Music</li>
+                </ul>
+
         </ul>
     </div>
 </div>
 
+<!-- Timer Section -->
 <div class="timer-container">
     <h1>Pomodoro Timer</h1>
 
@@ -45,16 +56,19 @@
         <button onclick="stopTimer()">Stop</button>
         <button onclick="resetTimer()">Reset</button>
     </div>
-
-    <button id="statusButton" onclick="redirectToTasks()" style="display: none;">Go to Tasks</button>
 </div>
 
+<!-- Background Music -->
+<audio id="bg-audio" loop>
+    <source src="" type="audio/mpeg">
+</audio>
+
+<!-- JavaScript -->
 <script>
     let timer;
     let timeLeft = 25 * 60;
     let isRunning = false;
-    let isCompleted = false;
-    let taskId = "{{ task[0] }}";  // Get task ID from Flask
+    let audio = document.getElementById("bg-audio");
 
     function updateTimerDisplay() {
         let minutes = Math.floor(timeLeft / 60);
@@ -66,14 +80,13 @@
     function startTimer() {
         if (!isRunning) {
             isRunning = true;
+            if (audio.src) audio.play();
             timer = setInterval(() => {
                 if (timeLeft > 0) {
                     timeLeft--;
                     updateTimerDisplay();
                 } else {
                     stopTimer();
-                    isCompleted = true;
-                    updateTaskStatus("Completed");
                 }
             }, 1000);
         }
@@ -82,14 +95,14 @@
     function stopTimer() {
         clearInterval(timer);
         isRunning = false;
-        document.getElementById("statusButton").style.display = "block";
+        audio.pause();
     }
 
     function resetTimer() {
         stopTimer();
         timeLeft = 25 * 60;
         updateTimerDisplay();
-        document.getElementById("statusButton").style.display = "none";
+        audio.currentTime = 0;
     }
 
     function setShortBreak() {
@@ -109,29 +122,6 @@
         updateTimerDisplay();
     }
 
-    function redirectToTasks() {
-        let status = isCompleted ? "Completed" : "Incomplete";
-        updateTaskStatus(status);
-    }
-
-    function updateTaskStatus(status) {
-        fetch("/update_status", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ task_id: taskId, status: status })
-        }).then(response => {
-            if (response.ok) {
-                alert("Task Status: " + status);
-                window.location.href = "/";
-            }
-        });
-    }
-
-    updateTimerDisplay();
-
-    // Menu Functions
     function toggleMenu() {
         let menu = document.getElementById("menu");
         menu.style.display = menu.style.display === "block" ? "none" : "block";
@@ -141,284 +131,29 @@
         let submenu = document.getElementById("submenu");
         submenu.style.display = submenu.style.display === "block" ? "none" : "block";
     }
-    function goBack() {
-        window.location.href = "/otimer";
-    }
-</script>
 
-</body>
-</html>
-
-
-
-
-
-
-
-
-
-
-<!--<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animated Pomodoro Timer</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: linear-gradient(135deg, #b0e0e6, #fff2ac);
-            margin: 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Floating Animation for Timer */
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
-        }
-
-        .container {
-            text-align: center;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-            width: 400px;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        /* Timer Glow Effect */
-        .timer {
-            font-size: 64px;
-            font-weight: bold;
-            color: #618264;
-            margin: 25px 0;
-            text-shadow: 0 0 10px rgba(97, 130, 100, 0.8);
-        }
-
-        .buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .break-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        /* Buttons Glow Effect */
-        @keyframes glow {
-            0% { box-shadow: 0 0 5px rgba(111, 163, 239, 0.5); }
-            50% { box-shadow: 0 0 15px rgba(111, 163, 239, 0.8); }
-            100% { box-shadow: 0 0 5px rgba(111, 163, 239, 0.5); }
-        }
-
-        button {
-            padding: 12px 18px;
-            font-size: 18px;
-            background: linear-gradient(90deg, #6fa3ef, #3f8efc);
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: 0.3s;
-            animation: glow 2s infinite alternate;
-        }
-
-        button:hover {
-            background: linear-gradient(90deg, #3f8efc, #6fa3ef);
-            transform: scale(1.05);
-        }
-
-        /* Slide-in Menu Animation */
-        @keyframes slide-in {
-            from { transform: translateX(100px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        .menu-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            text-align: right;
-            animation: slide-in 0.5s ease-out;
-        }
-
-        .menu-btn {
-            font-size: 20px;
-            background: #ff758c;
-            color: white;
-            border: none;
-            padding: 12px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 130px;
-        }
-
-        .menu-btn:hover {
-            background: #ff5c75;
-        }
-
-        .menu {
-            position: absolute;
-            top: 50px;
-            right: 0;
-            width: 220px;
-            background: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            padding: 10px;
-            border-radius: 8px;
-            display: none;
-        }
-
-        .menu ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .menu ul li {
-            padding: 12px;
-            background: #ffebbb;
-            margin: 5px 0;
-            text-align: center;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .menu ul li:hover {
-            background: #ffe18a;
-        }
-
-        /* Submenu Fade-In */
-        @keyframes fade-in {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .submenu {
-            display: none;
-            margin-top: 5px;
-            animation: fade-in 0.3s ease-in-out;
-        }
-
-        .submenu li {
-            font-size: 14px;
-            background: #fff0c9;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .menu-container {
-                right: 10px;
-                top: 10px;
-            }
-
-            .menu {
-                width: 180px;
-            }
-        }
-    </style>
-</head>
-<body>
-
-<div class="container">
-    <h1>Pomodoro Timer</h1>
-
-    <div class="break-buttons">
-        <button onclick="setShortBreak()">Short Break (5:00)</button>
-        <button onclick="setLongBreak()">Long Break (15:00)</button>
-    </div>
-
-    <div class="timer" id="timer">25:00</div>
-
-    <div class="buttons">
-        <button onclick="startTimer()">Start</button>
-        <button onclick="stopTimer()">Stop</button>
-        <button onclick="resetTimer()">Reset</button>
-    </div>
-</div>
-
-
-<div class="menu-container">
-    <button class="menu-btn" onclick="toggleMenu()">☰ Menu</button>
-
-    <div class="menu" id="menu">
-        <ul>
-            <li onclick="toggleSubmenu()">📋 Schedule ▼</li>
-            <ul class="submenu" id="submenu">
-                <li>📌 Task</li>
-                <li>📘 Practical Problem</li>
-                <li>📖 Revision</li>
-                <li>📚 Subject Specific</li>
-                <li>📅 Exam Preparation</li>
-                <li>💬 Group Discussion</li>
-            </ul>
-            <li>📆 Calendar</li>
-            <li>📊 Progress</li>
-        </ul>
-    </div>
-</div>
-
-<script>
-    let timer;
-    let timeLeft = 25 * 60;
-    let isRunning = false;
-
-    function updateTimerDisplay() {
-        let minutes = Math.floor(timeLeft / 60);
-        let seconds = timeLeft % 60;
-        document.getElementById("timer").textContent =
-            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    function toggleAudioSubmenu() {
+        let audioSubmenu = document.getElementById("audio-submenu");
+        audioSubmenu.style.display = audioSubmenu.style.display === "block" ? "none" : "block";
     }
 
-    function startTimer() {
-        if (!isRunning) {
-            isRunning = true;
-            timer = setInterval(() => {
-                if (timeLeft > 0) {
-                    timeLeft--;
-                    updateTimerDisplay();
-                } else {
-                    stopTimer();
-                }
-            }, 1000);
+    function changeAudio(track) {
+        if (track === "none") {
+            audio.pause();
+            audio.src = "";
+        } else {
+            audio.src = track;
+            audio.load();
+            audio.play();
         }
     }
 
-    function stopTimer() {
-        clearInterval(timer);
-        isRunning = false;
-    }
-
-    function resetTimer() {
-        stopTimer();
-        timeLeft = 25 * 60;
-        updateTimerDisplay();
-    }
-
-    function toggleMenu() {
-        document.getElementById("menu").style.display ^= "block";
-    }
-
-    function toggleSubmenu() {
-        document.getElementById("submenu").style.display ^= "block";
+    function navigateTo(url) {
+        window.location.href = url;
     }
 
     updateTimerDisplay();
 </script>
 
 </body>
-</html>-->
+</html>

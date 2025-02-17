@@ -1,14 +1,15 @@
+<!-- practical.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To-Do List</title>
+    <title>Practical Task</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        .btn-custom {
+          .btn-custom {
             width: 120px;
             height: 40px;
             font-size: 14px;
@@ -20,18 +21,18 @@
         }
     </style>
 </head>
-<body class="bg-light">
+<body>
 
 <!-- Back Button -->
-<button class="btn btn-secondary btn-custom back-button" onclick="window.location.href='/otimer'">⬅ Back</button>
+<button class="btn back-button" onclick="window.location.href='/otimer'">⬅ Back</button>
 
 <!-- Menu -->
 {% include 'menu.html' %}
 
 <div class="container mt-5">
-    <h2 class="text-center">To-Do List</h2>
+    <h2 class="text-center">Practical Task</h2>
 
-    <form id="taskForm" class="mb-4" method="POST" action="/add">
+    <form id="practicalForm" class="mb-4" method="POST" action="/add_practical">
         <div class="row">
             <div class="col-md-3">
                 <input type="text" name="task_name" class="form-control" placeholder="Task Name" required>
@@ -47,15 +48,15 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <button type="submit" class="btn btn-primary btn-custom">Add Task</button>
+                <button type="submit" class="btn btn-warning btn-custom">Add Task</button>
             </div>
         </div>
     </form>
 
     <table class="table table-bordered">
-        <thead class="table-dark">
+        <thead>
             <tr>
-                <th>ID</th>
+                <th>P_ID</th>
                 <th>Task</th>
                 <th>Date</th>
                 <th>Priority</th>
@@ -63,17 +64,17 @@
                 <th>Action</th>
             </tr>
         </thead>
-        <tbody id="taskTableBody">
-            {% for task in tasks %}
-            <tr id="p_id-{{ task[0] }}">
-                <td>{{ task[0] }}</td>
-                <td>{{ task[1] }}</td>
-                <td>{{ task[2] }}</td>
-                <td>{{ task[3] }}</td>
-                <td id="p_id-{{ task[0] }}">{{ task[4] }}</td>
+        <tbody>
+            {% for practical in practicals %}
+            <tr id="p_id-{{ practical[0] }}">
+                <td>{{ practical[0] }}</td>
+                <td>{{ practical[1] }}</td>
+                <td>{{ practical[2] }}</td>
+                <td>{{ practical[3] }}</td>
+                <td>{{ practical[4] }}</td>
                 <td>
-                    <a href="/timer/{{ task[0] }}" class="btn btn-success btn-sm btn-custom">Start Timer</a>
-                    <button class="btn btn-danger btn-sm delete-task btn-custom" data-id="{{ task[0] }}">Delete</button>
+                    <a href="/practical_timer/{{ practical[0] }}" class="btn btn-success btn-sm btn-custom">Start Timer</a>
+                    <button class="btn btn-danger btn-sm delete-practical btn-custom" data-id="{{ practical[0] }}">Delete</button>
                 </td>
             </tr>
             {% endfor %}
@@ -83,11 +84,10 @@
 
 <script>
 $(document).ready(function () {
-    // Delete Task AJAX
-    $(document).on("click", ".delete-task", function () {
-        let taskId = $(this).data("id");
+    $(document).on("click", ".delete-practical", function () {
+        let pId = $(this).data("id");
         $.ajax({
-            url: `/delete/${taskId}`,
+            url: `/delete_practical/${pId}`,
             type: "DELETE",
             success: function () {
                 location.reload();

@@ -21,6 +21,16 @@
         </ul>
         <li onclick="navigateTo('/calendar')">📆 Calendar</li>
         <li onclick="navigateTo('/progress')">📊 Progress</li>
+
+         <!-- 🎵 Background Music Option -->
+            <li onclick="toggleAudioSubmenu()">🎵 Background Music ▼</li>
+                <ul class="submenu" id="audio-submenu" style="display: none;">
+                    <li onclick="changeAudio('{{ url_for('static', filename='audio/a1.mp3') }}')">🎶 Relaxing Music</li>
+                    <li onclick="changeAudio('{{ url_for('static', filename='audio/a2.mp3') }}')">🎵 Focus Beats</li>
+                    <li onclick="changeAudio('{{ url_for('static', filename='audio/nature.mp3') }}')">🌿 Nature Sounds</li>
+                    <li onclick="changeAudio('none')">🚫 Stop Music</li>
+                </ul>
+
     </ul>
 </div>
 
@@ -33,6 +43,28 @@
     function navigateTo(page) {
         window.location.href = page;
     }
+
+    function toggleAudioSubmenu() {
+        let audioSubmenu = document.getElementById("audio-submenu");
+        audioSubmenu.style.display = audioSubmenu.style.display === "block" ? "none" : "block";
+    }
+
+    function changeAudio(track) {
+        if (track === "none") {
+            audio.pause();
+            audio.src = "";
+        } else {
+            audio.src = track;
+            audio.load();
+            audio.play();
+        }
+    }
+
+    function navigateTo(url) {
+        window.location.href = url;
+    }
+
+
 </script>
 
 <style>
