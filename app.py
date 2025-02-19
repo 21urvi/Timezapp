@@ -1,248 +1,122 @@
-'''from flask import Flask, render_template, request, redirect, url_for, session
-from flask_mysqldb import MySQL
-import MySQLdb.cursors
-import random, string
+from flask import Flask, request, session, render_template, redirect, url_for
+from user import UserManager
+from task import TaskManager
+from practical import PracticalTaskManager
+from revision import RevisionTaskManager
+from subject import SubjectTaskManager
+from timer import TimerManager
+from calendar_manager import CalendarManager
+from progress import ProgressManager
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-# MySQL Configuration
-app.config['MYSQL_HOST'] = 'localhost'  # Change if using a different host
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'urvi2115'
-app.config['MYSQL_DB'] = 'timezap'
+# Instantiate Managers
+user_manager = UserManager()
+task_manager = TaskManager()
+practical_manager = PracticalTaskManager()
+revision_manager = RevisionTaskManager()
+subject_manager = SubjectTaskManager()
+timer_manager = TimerManager()
+calendar_manager = CalendarManager()
+progress_manager = ProgressManager()
 
-mysql = MySQL(app)
-
-# Generate CAPTCHA
-def generate_captcha():
-    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
-
-@app.route('/login', methods=['GET', 'POST'])
+# --------- USER AUTHENTICATION ---------
+@app.route('/', methods=['GET', 'POST'])
 def login():
-    msg = ''
-    if request.method == 'POST':
-        email = request.form['email'].strip().lower()
-        password = request.form['password']
-        user_captcha = request.form['captcha']
-        stored_captcha = session.get('captcha')
+    return user_manager.login_user(request)
 
-        # Check CAPTCHA
-        if user_captcha != stored_captcha:
-            msg = 'Incorrect CAPTCHA. Try again.'
-        else:
-            # Store user credentials in the database
-            cursor = mysql.connection.cursor()
-            cursor.execute('INSERT INTO users (email, password) VALUES (%s, %s)', (email, password))
-            mysql.connection.commit()
-            cursor.close()
+@app.route('/logout', methods=['POST'])  # Changed to POST for security
+def logout():
+    return user_manager.logout_user()
 
-            session['user'] = email
-            return redirect(url_for('welcome'))  # Redirect to welcome page after login
-
-    session['captcha'] = generate_captcha()  # Refresh CAPTCHA
-    return render_template('login.html', captcha=session['captcha'], msg=msg)
-
-@app.route('/welcome', methods=['GET', 'POST'])
+@app.route('/welcome', methods=['GET'])
 def welcome():
-    if 'user' in session:
-        if request.method == 'POST':
-            return redirect(url_for('timer'))  # Redirect to timer on button click
+    if session.get('user'):  # Prevents KeyError
         return render_template('welcome.html', user=session['user'])
     return redirect(url_for('login'))
 
-@app.route('/')
+# --------- OTIMER PAGE ---------
+@app.route('/otimer', methods=['GET'])
 def otimer():
     return render_template('otimer.html')
 
-@app.route('/logout')
-def logout():
-    session.pop('user', None)
-    return redirect(url_for('login'))
-
-
-if __name__ == '__main__':
-    app.run(debug=True)'''
-
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session
-import mysql.connector
-import random, string
-
-app = Flask(__name__)
-app.secret_key = 'your_secret_key'
-
-# MySQL Database Connection
-db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="urvi2115",
-    database="timezap"
-)
-cursor = db.cursor()
-
-
-# Generate CAPTCHA
-def generate_captcha():
-    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
-
-
-# ---------- USER AUTHENTICATION ----------
-@app.route('/', methods=['GET', 'POST'])
-def login():
-    msg = ''
-    if request.method == 'POST':
-        email = request.form['email'].strip().lower()
-        password = request.form['password']
-        user_captcha = request.form['captcha']
-        stored_captcha = session.get('captcha')
-
-        if user_captcha != stored_captcha:
-            msg = 'Incorrect CAPTCHA. Try again.'
-        else:
-            cursor.execute('INSERT INTO users (email, password) VALUES (%s, %s)', (email, password))
-            db.commit()
-            session['user'] = email
-            return redirect(url_for('welcome'))
-
-    session['captcha'] = generate_captcha()
-    return render_template('login.html', captcha=session['captcha'], msg=msg)
-
-
-@app.route('/welcome', methods=['GET', 'POST'])
-def welcome():
-    if 'user' in session:
-        if request.method == 'POST':
-            return redirect(url_for('home'))
-        return render_template('welcome.html', user=session['user'])
-    return redirect(url_for('login'))
-
-
-@app.route('/logout')
-def logout():
-    session.pop('user', None)
-    return redirect(url_for('login'))
-
-
-# ---------- TASK MANAGEMENT ----------
-@app.route("/tasks")
+# --------- TASK MANAGEMENT ---------
+@app.route("/tasks", methods=['GET'])
 def home():
-    if 'user' not in session:
-        return redirect(url_for('login'))
-
-    cursor.execute("SELECT * FROM tasks")
-    tasks = cursor.fetchall()
-    return render_template("tasks.html", tasks=tasks)
-
-
-@app.route("/timer/<int:task_id>")
-def timer(task_id):
-    if 'user' not in session:
-        return redirect(url_for('login'))
-
-    cursor.execute("SELECT * FROM tasks WHERE task_id = %s", (task_id,))
-    task = cursor.fetchone()
-
-    if task:
-        return render_template("timer.html", task=task)
-    return redirect(url_for("home"))
-
+    return task_manager.get_tasks()
 
 @app.route("/add", methods=["POST"])
 def add_task():
-    if 'user' not in session:
-        return redirect(url_for('login'))
-
-    data = request.form
-    cursor.execute("INSERT INTO tasks (task_name, date, priority, status) VALUES (%s, %s, %s, 'Incomplete')",
-                   (data["task_name"], data["date"], data["priority"]))
-    db.commit()
-    return redirect(url_for("home"))
-
+    return task_manager.add_task(request)
 
 @app.route("/delete/<int:task_id>", methods=["DELETE"])
 def delete_task(task_id):
-    if 'user' not in session:
-        return jsonify(success=False, message="Unauthorized"), 403
+    return task_manager.delete_task(task_id)
 
-    cursor.execute("DELETE FROM tasks WHERE task_id = %s", (task_id,))
-    db.commit()
-    return jsonify(success=True)
-
-
-@app.route("/update_status", methods=["POST"])
-def update_status():
-    if 'user' not in session:
-        return jsonify(success=False, message="Unauthorized"), 403
-
-    data = request.json
-    cursor.execute("UPDATE tasks SET status = %s WHERE task_id = %s", (data["status"], data["task_id"]))
-    db.commit()
-    return jsonify(success=True)
-
-
-# ---------- PRACTICAL TASK MANAGEMENT ----------
-@app.route("/practical")
+# --------- PRACTICAL TASK MANAGEMENT ---------
+@app.route("/practical", methods=['GET'])
 def practical():
-    if "user" in session:
-        cursor.execute("SELECT * FROM practical")
-        practicals = cursor.fetchall()
-        return render_template("practical.html", practicals=practicals)
-    return redirect(url_for("login"))
-
+    return practical_manager.get_practical_tasks()
 
 @app.route("/add_practical", methods=["POST"])
 def add_practical():
-    if "user" in session:
-        data = request.form
-        cursor.execute(
-            "INSERT INTO practical (ptask_name, p_date, p_priority, p_status) VALUES (%s, %s, %s, 'Incomplete')",
-            (data["task_name"], data["date"], data["priority"]))
-        db.commit()
-        return redirect(url_for("practical"))
-    return redirect(url_for("login"))
-
+    return practical_manager.add_practical_task(request)
 
 @app.route("/delete_practical/<int:p_id>", methods=["DELETE"])
 def delete_practical(p_id):
-    if "user" in session:
-        cursor.execute("DELETE FROM practical WHERE p_id = %s", (p_id,))
-        db.commit()
-        return jsonify(success=True)
-    return jsonify(success=False, message="Unauthorized")
+    return practical_manager.delete_practical_task(p_id)
 
-
-@app.route("/practical_timer/<int:p_id>")
-def practical_timer(p_id):
-    if "user" in session:
-        cursor.execute("SELECT * FROM practical WHERE p_id = %s", (p_id,))
-        practical = cursor.fetchone()
-        if practical:
-            return render_template("practical_timer.html", practical=practical)
-        return redirect(url_for("practical"))
-    return redirect(url_for("login"))
-
-
-# ---------- DEFAULT ROUTES ----------
-@app.route('/otimer')
-def otimer():
-    return render_template('otimer.html')
-
-
-@app.route('/calendar')
-def calendar():
-    return render_template('calendar.html')
-
-
-@app.route('/progress')
-def progress():
-    return render_template('progress.html')
-
-@app.route('/revision')
+# --------- REVISION TASK MANAGEMENT ---------
+@app.route("/revision", methods=['GET'])
 def revision():
-    return render_template('revision.html')
+    return revision_manager.get_revisions()
 
+@app.route("/add_revision", methods=["POST"])
+def add_revision():
+    return revision_manager.add_revision(request)
 
-# ---------- RUN SERVER ----------
+@app.route("/delete_revision/<int:r_id>", methods=["DELETE"])
+def delete_revision(r_id):
+    return revision_manager.delete_revision(r_id)
+
+# --------- SUBJECT TASK MANAGEMENT ---------
+@app.route("/subject", methods=['GET'])
+def subject():
+    return subject_manager.get_subjects()
+
+@app.route("/add_subject", methods=["POST"])
+def add_subject():
+    return subject_manager.add_subject(request)
+
+@app.route("/delete_subject/<int:s_id>", methods=["DELETE"])
+def delete_subject(s_id):
+    return subject_manager.delete_subject(s_id)
+
+# --------- TIMER ---------
+@app.route("/timer/<int:task_id>", methods=['GET'])
+def task_timer(task_id):
+    return timer_manager.get_task_timer(task_id)
+
+@app.route("/practical_timer/<int:p_id>", methods=['GET'])
+def practical_timer(p_id):
+    return timer_manager.get_practical_timer(p_id)
+
+@app.route("/subject_timer/<int:s_id>", methods=['GET'])
+def subject_timer(s_id):
+    """Redirect to the Timer page for a specific subject task"""
+    return timer_manager.get_subject_timer(s_id)
+
+# --------- CALENDAR ---------
+@app.route('/calendar', methods=['GET'])
+def calendar():
+    return calendar_manager.show_calendar()
+
+# --------- PROGRESS ---------
+@app.route('/progress', methods=['GET'])
+def progress():
+    return progress_manager.show_progress()
+
+# --------- RUN SERVER ---------
 if __name__ == '__main__':
     app.run(debug=True)
-

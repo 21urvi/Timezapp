@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discussion List</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/task.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body class="bg-light">
+
+<!-- Back Button -->
+<button class="back-button" onclick="window.location.href='/otimer'">⬅ Back</button>
+
+<!-- Menu -->
+{% include 'menu.html' %}
+
+<div class="container mt-5">
+    <h2 class="text-center">Discussion</h2>
+
+    <form id="discussionForm" class="mb-4" method="POST" action="/add_discussion">
+        <div class="row">
+            <div class="col-md-2">
+                <input type="text" name="dtask_name" class="form-control" placeholder="Discussion Name" required>
+            </div>
+            <div class="col-md-2">
+                <select name="t_id" class="form-control" required>
+                    <option value="" disabled selected>Select Task</option>
+                    {% for task in tasks %}
+                        <option value="{{ task[0] }}">{{ task[1] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <input type="date" name="d_date" class="form-control" required>
+            </div>
+            <div class="col-md-2">
+                <select name="dpriority" class="form-control">
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary btn-custom">Add Discussion</button>
+            </div>
+        </div>
+    </form>
+
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Discussion Name</th>
+                <th>Task ID</th>
+                <th>Date</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="discussionTableBody">
+            {% for discussion in discussions %}
+            <tr id="discussion-{{ discussion[0] }}">
+                <td>{{ discussion[0] }}</td>
+                <td>{{ discussion[1] }}</td>
+                <td>{{ discussion[2] }}</td>
+                <td>{{ discussion[3] }}</td>
+                <td>{{ discussion[4] }}</td>
+                <td id="status-{{ discussion[0] }}">{{ discussion[5] }}</td>
+                <td>
+                    <a href="/discussion_timer/{{ discussion[0] }}" class="btn btn-success btn-sm btn-custom">Start Timer</a>
+                    <button class="btn btn-danger btn-sm delete-discussion btn-custom" data-id="{{ discussion[0] }}">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+$(document).ready(function () {
+    // Delete Discussion AJAX
+    $(document).on("click", ".delete-discussion", function () {
+        let discussionId = $(this).data("id");
+        $.ajax({
+            url: `/delete_discussion/${discussionId}`,
+            type: "DELETE",
+            success: function () {
+                location.reload();
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>

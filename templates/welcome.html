@@ -72,22 +72,15 @@
 
 <div class="welcome-container">
     <h2>Welcome, {{ user }}</h2>
-
-    <div class="button-container">
-        <!-- Next Button: Moves to Timer Page -->
-        <form action="{{ url_for('otimer') }}" method="get">
-            <button type="submit">Next</button>
-        </form>
-
-        <!-- Logout Button -->
-        <form action="{{ url_for('logout') }}" method="get">
-            <button type="submit">Logout</button>
-        </form>
+    <form action="{{ url_for('otimer') }}" method="get">
+        <button type="submit">Next</button>
+    </form>
     </div>
 </div>
 
 </body>
 </html>
+
 
 
 
