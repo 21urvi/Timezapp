@@ -25,7 +25,7 @@
                 <input type="text" name="dtask_name" class="form-control" placeholder="Discussion Name" required>
             </div>
             <div class="col-md-2">
-                <select name="t_id" class="form-control" required>
+                <select name="task_id" class="form-control" required>  <!-- Fixed name from t_id to task_id -->
                     <option value="" disabled selected>Select Task</option>
                     {% for task in tasks %}
                         <option value="{{ task[0] }}">{{ task[1] }}</option>
@@ -33,7 +33,7 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <input type="date" name="d_date" class="form-control" required>
+                <input type="date" name="ddate" class="form-control" required>  <!-- Fixed name from d_date to ddate -->
             </div>
             <div class="col-md-2">
                 <select name="dpriority" class="form-control">
@@ -54,7 +54,7 @@
             <tr>
                 <th>ID</th>
                 <th>Discussion Name</th>
-                <th>Task ID</th>
+                <th>Task</th>  <!-- Changed from Task ID to Task Name -->
                 <th>Date</th>
                 <th>Priority</th>
                 <th>Status</th>
@@ -66,7 +66,7 @@
             <tr id="discussion-{{ discussion[0] }}">
                 <td>{{ discussion[0] }}</td>
                 <td>{{ discussion[1] }}</td>
-                <td>{{ discussion[2] }}</td>
+                <td>{{ discussion[2] }}</td>  <!-- Shows task name instead of ID -->
                 <td>{{ discussion[3] }}</td>
                 <td>{{ discussion[4] }}</td>
                 <td id="status-{{ discussion[0] }}">{{ discussion[5] }}</td>
@@ -88,8 +88,15 @@ $(document).ready(function () {
         $.ajax({
             url: `/delete_discussion/${discussionId}`,
             type: "DELETE",
-            success: function () {
-                location.reload();
+            success: function (response) {
+                if (response.success) {
+                    $("#discussion-" + discussionId).remove();
+                } else {
+                    alert("Error deleting discussion");
+                }
+            },
+            error: function () {
+                alert("Server error");
             }
         });
     });

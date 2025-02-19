@@ -1,0 +1,134 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: radial-gradient(circle, #8b5cf6, #4c1d95);
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    width: 90%;
+    max-width: 800px;
+    color: white;
+    text-align: center;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+/* Form Styles */
+#practicalForm {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+}
+
+/* Button Styles */
+.btn {
+    width: 150px;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    text-align: center;
+    display: inline-block;
+    color: black;
+}
+
+.btn-warning {
+    background: linear-gradient(90deg, #ffcc80, #ffe0b2);
+}
+
+.btn-success {
+    background: linear-gradient(90deg, #64b5f6, #bbdefb);
+}
+
+.btn-danger {
+    background: linear-gradient(90deg, #e57373, #ffcdd2);
+}
+
+/* Table Styles */
+.table {
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table thead {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.table tbody tr {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* List Styles */
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+li {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Back Button Styles */
+.back-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: linear-gradient(90deg, #ff9800, #ffc107);
+    color: black;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s ease-in-out;
+    z-index: 1000;
+    width: 150px;
+}
+
+.back-button:hover {
+    background: linear-gradient(90deg, #f57c00, #ffa000);
+}

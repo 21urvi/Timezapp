@@ -1,9 +1,11 @@
-from flask import Flask, request, session, render_template, redirect, url_for
+from flask import Flask, request, session, render_template, redirect, url_for, jsonify
 from user import UserManager
 from task import TaskManager
 from practical import PracticalTaskManager
 from revision import RevisionTaskManager
 from subject import SubjectTaskManager
+from exam import ExamTaskManager
+from discussion import DiscussionManager
 from timer import TimerManager
 from calendar_manager import CalendarManager
 from progress import ProgressManager
@@ -17,6 +19,8 @@ task_manager = TaskManager()
 practical_manager = PracticalTaskManager()
 revision_manager = RevisionTaskManager()
 subject_manager = SubjectTaskManager()
+exam_manager = ExamTaskManager()
+discussion_manager = DiscussionManager()
 timer_manager = TimerManager()
 calendar_manager = CalendarManager()
 progress_manager = ProgressManager()
@@ -26,13 +30,13 @@ progress_manager = ProgressManager()
 def login():
     return user_manager.login_user(request)
 
-@app.route('/logout', methods=['POST'])  # Changed to POST for security
+@app.route('/logout', methods=['POST'])
 def logout():
     return user_manager.logout_user()
 
 @app.route('/welcome', methods=['GET'])
 def welcome():
-    if session.get('user'):  # Prevents KeyError
+    if session.get('user'):
         return render_template('welcome.html', user=session['user'])
     return redirect(url_for('login'))
 
@@ -93,6 +97,32 @@ def add_subject():
 def delete_subject(s_id):
     return subject_manager.delete_subject(s_id)
 
+# --------- EXAM MANAGEMENT ---------
+@app.route("/exam", methods=['GET'])
+def exam():
+    return exam_manager.get_exams()
+
+@app.route("/add_exam", methods=["POST"])
+def add_exam():
+    return exam_manager.add_exam(request)
+
+@app.route("/delete_exam/<int:e_id>", methods=["DELETE"])
+def delete_exam(e_id):
+    return exam_manager.delete_exam(e_id)
+
+# --------- DISCUSSION MANAGEMENT ---------
+@app.route("/discussion", methods=['GET'])
+def discussion():
+    return discussion_manager.get_discussions()
+
+@app.route("/add_discussion", methods=["POST"])
+def add_discussion():
+    return discussion_manager.add_discussion()
+
+@app.route("/delete_discussion/<int:d_id>", methods=["DELETE"])
+def delete_discussion(d_id):
+    return discussion_manager.delete_discussion(d_id)
+
 # --------- TIMER ---------
 @app.route("/timer/<int:task_id>", methods=['GET'])
 def task_timer(task_id):
@@ -102,10 +132,21 @@ def task_timer(task_id):
 def practical_timer(p_id):
     return timer_manager.get_practical_timer(p_id)
 
+@app.route("/revision_timer/<int:r_id>", methods=['GET'])
+def revision_timer(r_id):
+    return timer_manager.get_revision_timer(r_id)
+
 @app.route("/subject_timer/<int:s_id>", methods=['GET'])
 def subject_timer(s_id):
-    """Redirect to the Timer page for a specific subject task"""
     return timer_manager.get_subject_timer(s_id)
+
+@app.route("/exam_timer/<int:e_id>", methods=['GET'])
+def exam_timer(e_id):
+    return timer_manager.get_exam_timer(e_id)
+
+@app.route("/discussion_timer/<int:d_id>", methods=['GET'])
+def discussion_timer(d_id):
+    return timer_manager.get_discussion_timer(d_id)
 
 # --------- CALENDAR ---------
 @app.route('/calendar', methods=['GET'])
