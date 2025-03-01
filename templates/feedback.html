@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/RatingStyle.css') }}">
+    <title>Feedback and Rating Form</title>
+    <style>
+        /* Global Styling */
+        body {
+            background-color: #ADD8E6; /* Light Blue */
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+
+        .container {
+            text-align: center;
+            position: relative;
+            width: 50%;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #fff;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .cancel-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            background-color: #ccc;
+            border: none;
+            border-radius: 50%;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+    <script>
+        function closeForm() {
+            window.location.href = "/"; // Redirect to the index page
+        }
+    </script>
+</head>
+<body>
+
+    <!-- Cancel Button -->
+    <button class="cancel-button" onclick="closeForm()">×</button>
+
+    <!-- Feedback Form Section -->
+    <div class="container">
+        <h1>Say hello to Highway</h1>
+        <form method="POST">
+            <div class="form-group">
+                <input type="text" name="name" placeholder="Your name..." required>
+            </div>
+            <div class="form-group">
+                <input type="email" name="email" placeholder="Your email..." required>
+            </div>
+            <div class="form-group">
+                <textarea name="message" placeholder="Your message..." required></textarea>
+            </div>
+            <button type="submit">SEND MESSAGE NOW</button>
+        </form>
+    </div>
+
+</body>
+</html>

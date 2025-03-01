@@ -3,93 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subject Tasks</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/sub.css') }}">
+    <title>Subject List</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/task.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .back-button { position: absolute; top: 10px; left: 10px; }
+    </style>
 </head>
 <body>
 
 <!-- Back Button -->
-<button class="btn back-button" onclick="window.location.href='/otimer'">⬅ Back</button>
+<button class="btn btn-secondary back-button" onclick="window.location.href='/otimer'">⬅ Back</button>
 
 <!-- Menu -->
 {% include 'menu.html' %}
 
 <div class="container mt-5">
-    <h2 class="text-center">Subject Tasks</h2>
+    <h2 class="text-center">Subject List</h2>
 
-    <!-- Subject Task Form -->
-    <form id="subjectForm" class="mb-4 p-3 rounded shadow-lg" method="POST" action="/add_subject">
-        <div class="row g-3">
+    <!-- Subject Form -->
+    <form id="subjectForm" class="mb-4">
+        <div class="row g-2 align-items-center">
             <div class="col-md-2">
-                <input type="text" name="subject" class="form-control" placeholder="Subject" required>
+                <input type="text" id="subject" class="form-control" placeholder="Subject" required>
             </div>
             <div class="col-md-2">
-                <input type="text" name="stask_name" class="form-control" placeholder="Task Name" required>
+                <input type="text" id="stask_name" class="form-control" placeholder="Task Name" required>
             </div>
             <div class="col-md-2">
-                <input type="date" name="sdate" class="form-control" required>
+                <input type="date" id="sdate" class="form-control" required>
             </div>
             <div class="col-md-2">
-                <select name="spriority" class="form-control">
+                <select id="spriority" class="form-control">
                     <option value="High">High</option>
                     <option value="Medium">Medium</option>
                     <option value="Low">Low</option>
                 </select>
             </div>
             <div class="col-md-2">
-                <button type="submit" class="btn btn-warning btn-custom">Add Task</button>
+                <button type="submit" class="btn btn-primary">Add Subject</button>
             </div>
         </div>
     </form>
 
-    <!-- Table to Display Tasks -->
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover">
-            <thead class="table-dark text-center">
-                <tr>
-                    <th>ID</th>
-                    <th>Subject</th>
-                    <th>Task</th>
-                    <th>Date</th>
-                    <th>Priority</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for subject in subjects %}
-                <tr id="subject-{{ subject[0] }}" class="text-center">
-                    <td>{{ subject[0] }}</td>
-                    <td>{{ subject[1] }}</td>
-                    <td>{{ subject[2] }}</td>
-                    <td>{{ subject[3] }}</td>
-                    <td>{{ subject[4] }}</td>
-                    <td>{{ subject[5] }}</td>
-                    <td>
-                        <a href="/subject_timer/{{ subject[0] }}" class="btn btn-primary btn-sm">Start Timer</a>
-                        <button class="btn btn-danger btn-sm delete-subject" data-id="{{ subject[0] }}">Delete</button>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    <!-- Subjects Table -->
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>Subject</th>
+                <th>Task Name</th>
+                <th>Date</th>
+                <th>Priority</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="subjectList">
+            <!-- Subjects will load here -->
+        </tbody>
+    </table>
 </div>
 
-<!-- JavaScript -->
 <script>
 $(document).ready(function () {
-    $(document).on("click", ".delete-subject", function () {
-        let sid = $(this).data("id");
-        $.ajax({
-            url: `/delete_subject/${sid}`,
-            type: "DELETE",
-            success: function () {
-                location.reload();
+    loadSubjects();
+
+    // Load Subjects
+    function loadSubjects() {
+        $.get("/subjects_json", function (data) {
+            $("#subjectList").empty();
+            data.forEach(function (subject) {
+                $("#subjectList").append(`
+                    <tr id="subject-${subject.s_id}">
+                        <td>${subject.s_id}</td>
+                        <td>${subject.subject}</td>
+                        <td>${subject.stask_name}</td>
+                        <td>${new Date(subject.sdate).toLocaleDateString()}</td>
+                        <td>${subject.spriority}</td>
+                        <td>${subject.sstatus}</td>
+                        <td>
+                            <a href="/subject_timer/${subject.s_id}" class="btn btn-success btn-sm">Start Timer</a>
+                            <button class="btn btn-danger btn-sm delete-subject" data-id="${subject.s_id}">Delete</button>
+                        </td>
+                    </tr>
+                `);
+            });
+        });
+    }
+
+    // Add Subject
+    $("#subjectForm").submit(function (e) {
+        e.preventDefault();
+        let subjectData = {
+            subject: $("#subject").val(),
+            stask_name: $("#stask_name").val(),
+            sdate: $("#sdate").val(),
+            spriority: $("#spriority").val()
+        };
+
+        $.post("/add_subject", subjectData, function (response) {
+            if (response.success) {
+                loadSubjects();
+                $("#subjectForm")[0].reset();
+            } else {
+                alert("Failed to add subject.");
             }
         });
+    });
+
+    // Delete Subject
+    $(document).on("click", ".delete-subject", function () {
+        let subjectId = $(this).data("id");
+
+        if (confirm("Are you sure you want to delete this subject?")) {
+            $.ajax({
+                url: `/delete_subject/${subjectId}`,
+                type: "DELETE",
+                success: function (response) {
+                    if (response.success) {
+                        $(`#subject-${subjectId}`).remove();
+                    } else {
+                        alert("Failed to delete subject.");
+                    }
+                }
+            });
+        }
     });
 });
 </script>

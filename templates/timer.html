@@ -34,7 +34,9 @@
                     <li onclick="changeAudio('{{ url_for('static', filename='audio/Transcendence-chosic.com_.mp3') }}')">🌿 Nature Sounds</li>
                     <li onclick="changeAudio('none')">🚫 Stop Music</li>
                 </ul>
-
+        </ul>
+        <ul>
+            <li class="logout"><a href="/logout">🔓 Logout</a></li>
         </ul>
     </div>
 </div>
@@ -154,6 +156,25 @@
 
     updateTimerDisplay();
 </script>
+
+<style>
+    /* Logout Button Styling */
+    .logout {
+        background: red !important;
+        text-align: center;
+    }
+
+    .logout a {
+        color: white;
+        text-decoration: none;
+        display: block;
+        padding: 10px;
+    }
+
+    .logout:hover {
+        background: darkred !important;
+    }
+</style>
 
 </body>
 </html>

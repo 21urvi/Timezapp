@@ -1,26 +1,42 @@
-from flask import render_template, session, redirect, url_for
+from flask import Flask, render_template, jsonify
 from database import DatabaseManager
 
-class ProgressManager:
-    def __init__(self):
-        self.db = DatabaseManager()
+app = Flask(__name__)
+db_manager = DatabaseManager()
 
-    def show_progress(self):
-        """Show progress for tasks and practicals"""
-        if "user" not in session:
-            return redirect(url_for("login"))
 
-        completed_tasks = self.db.fetch_all("SELECT COUNT(*) FROM tasks WHERE status = 'Complete'")
-        total_tasks = self.db.fetch_all("SELECT COUNT(*) FROM tasks")
+def get_progress_data():
+    """Fetch progress statistics from all task-related tables."""
+    query = """
+        SELECT 'task' AS category, COUNT(task_id) AS total, 
+               COALESCE(SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END), 0) AS completed
+        FROM tasks
+        UNION ALL
+        SELECT 'subject' AS category, COUNT(s_id) AS total, 
+               COALESCE(SUM(CASE WHEN sstatus = 'completed' THEN 1 ELSE 0 END), 0) AS completed
+        FROM subject
+        UNION ALL
+        SELECT 'revision' AS category, COUNT(r_id) AS total, 
+               COALESCE(SUM(CASE WHEN rstatus = 'completed' THEN 1 ELSE 0 END), 0) AS completed
+        FROM revision
+        UNION ALL
+        SELECT 'practical' AS category, COUNT(p_id) AS total, 
+               COALESCE(SUM(CASE WHEN p_status = 'completed' THEN 1 ELSE 0 END), 0) AS completed
+        FROM practical
+        UNION ALL
+        SELECT 'exam' AS category, COUNT(e_id) AS total, 
+               COALESCE(SUM(CASE WHEN estatus = 'completed' THEN 1 ELSE 0 END), 0) AS completed
+        FROM exam
+        UNION ALL
+        SELECT 'discussion' AS category, COUNT(d_id) AS total, 
+               COALESCE(SUM(CASE WHEN dstatus = 'completed' THEN 1 ELSE 0 END), 0) AS completed
+        FROM discussion;
+    """
 
-        completed_practicals = self.db.fetch_all("SELECT COUNT(*) FROM practical WHERE p_status = 'Complete'")
-        total_practicals = self.db.fetch_all("SELECT COUNT(*) FROM practical")
+    progress_data = db_manager.fetch_all(query)
+    return {item["category"]: [item["completed"], item["total"] - item["completed"]] for item in progress_data}
 
-        progress_data = {
-            "completed_tasks": completed_tasks[0][0],
-            "total_tasks": total_tasks[0][0],
-            "completed_practicals": completed_practicals[0][0],
-            "total_practicals": total_practicals[0][0]
-        }
 
-        return render_template("progress.html", progress=progress_data)
+
+
+

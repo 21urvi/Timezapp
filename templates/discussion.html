@@ -3,15 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discussion List</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/task.css') }}">
+    <title>Discussion</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pre.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body>
 
 <!-- Back Button -->
-<button class="back-button" onclick="window.location.href='/otimer'">⬅ Back</button>
+<button class="btn btn-secondary back-button" onclick="window.location.href='/otimer'">⬅ Back</button>
 
 <!-- Menu -->
 {% include 'menu.html' %}
@@ -19,32 +26,31 @@
 <div class="container mt-5">
     <h2 class="text-center">Discussion</h2>
 
-    <form id="discussionForm" class="mb-4" method="POST" action="/add_discussion">
+    <form id="discussionForm" class="mb-4">
         <div class="row">
-            <div class="col-md-2">
-                <input type="text" name="dtask_name" class="form-control" placeholder="Discussion Name" required>
+            <div class="col-md-3">
+                <input type="text" name="discussion_name" class="form-control" placeholder="Discussion Name" required>
             </div>
-            <div class="col-md-2">
-                <select name="task_id" class="form-control" required>  <!-- Fixed name from t_id to task_id -->
+            <div class="col-md-3">
+                <select name="task_id" class="form-control" required>
                     <option value="" disabled selected>Select Task</option>
                     {% for task in tasks %}
-                        <option value="{{ task[0] }}">{{ task[1] }}</option>
+                        <option value="{{ task.task_id }}">{{ task.task_name }}</option>
                     {% endfor %}
                 </select>
             </div>
             <div class="col-md-2">
-                <input type="date" name="ddate" class="form-control" required>  <!-- Fixed name from d_date to ddate -->
+                <input type="date" name="date" class="form-control" required>
             </div>
             <div class="col-md-2">
-                <select name="dpriority" class="form-control">
+                <select name="priority" class="form-control">
                     <option value="High">High</option>
                     <option value="Medium">Medium</option>
                     <option value="Low">Low</option>
                 </select>
             </div>
-
             <div class="col-md-2">
-                <button type="submit" class="btn btn-primary btn-custom">Add Discussion</button>
+                <button type="submit" class="btn btn-warning">Add Discussion</button>
             </div>
         </div>
     </form>
@@ -52,27 +58,27 @@
     <table class="table table-bordered">
         <thead class="table-dark">
             <tr>
-                <th>ID</th>
-                <th>Discussion Name</th>
-                <th>Task</th>  <!-- Changed from Task ID to Task Name -->
+                <th>D_ID</th>
+                <th>Discussion</th>
+                <th>Task</th>
                 <th>Date</th>
                 <th>Priority</th>
                 <th>Status</th>
                 <th>Action</th>
             </tr>
         </thead>
-        <tbody id="discussionTableBody">
+        <tbody>
             {% for discussion in discussions %}
-            <tr id="discussion-{{ discussion[0] }}">
-                <td>{{ discussion[0] }}</td>
-                <td>{{ discussion[1] }}</td>
-                <td>{{ discussion[2] }}</td>  <!-- Shows task name instead of ID -->
-                <td>{{ discussion[3] }}</td>
-                <td>{{ discussion[4] }}</td>
-                <td id="status-{{ discussion[0] }}">{{ discussion[5] }}</td>
+            <tr id="d_id-{{ discussion.d_id }}">
+                <td>{{ discussion.d_id }}</td>
+                <td>{{ discussion.dtask_name }}</td>
+                <td>{{ discussion.related_task }}</td>
+                <td>{{ discussion.ddate }}</td>
+                <td>{{ discussion.dpriority }}</td>
+                <td>{{ discussion.dstatus }}</td>
                 <td>
-                    <a href="/discussion_timer/{{ discussion[0] }}" class="btn btn-success btn-sm btn-custom">Start Timer</a>
-                    <button class="btn btn-danger btn-sm delete-discussion btn-custom" data-id="{{ discussion[0] }}">Delete</button>
+                    <a href="/discussion_timer/{{ discussion.d_id }}" class="btn btn-success btn-sm">Start Timer</a>
+                    <button class="btn btn-danger btn-sm delete-discussion" data-id="{{ discussion.d_id }}">Delete</button>
                 </td>
             </tr>
             {% endfor %}
@@ -82,23 +88,23 @@
 
 <script>
 $(document).ready(function () {
-    // Delete Discussion AJAX
-    $(document).on("click", ".delete-discussion", function () {
-        let discussionId = $(this).data("id");
-        $.ajax({
-            url: `/delete_discussion/${discussionId}`,
-            type: "DELETE",
-            success: function (response) {
-                if (response.success) {
-                    $("#discussion-" + discussionId).remove();
-                } else {
-                    alert("Error deleting discussion");
-                }
-            },
-            error: function () {
-                alert("Server error");
-            }
+    $("#discussionForm").submit(function (e) {
+        e.preventDefault();
+        let formData = $(this).serialize();
+        $.post("/add_discussion", formData, function (response) {
+            alert(response.message);
+            location.reload();
         });
+    });
+
+    $(".delete-discussion").click(function () {
+        let dId = $(this).data("id");
+        if (confirm("Are you sure you want to delete this discussion?")) {
+            $.post(`/delete_discussion/${dId}`, function (response) {
+                alert(response.message);
+                location.reload();
+            });
+        }
     });
 });
 </script>

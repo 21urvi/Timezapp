@@ -3,37 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yearly Calendar</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='calendar.css') }}">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/locales-all.min.js"></script>
+    <title>Task Calendar</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css" rel="stylesheet">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- FullCalendar JS -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js"></script>
+
+    <style>
+        /* ✅ CSS Inside the Same File */
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #calendar {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+    </style>
 </head>
 <body>
 
-    <div class="calendar-container">
-        <h2>Your Task Calendar</h2>
-        <div id="calendar"></div>
-    </div>
+<!-- Back Button -->
+<button class="btn btn-secondary back-button" onclick="window.location.href='/otimer'">⬅ Back</button>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridYear', // Yearly View
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,dayGridYear'
-                },
-                events: {{ events|tojson|safe }},
-                eventClick: function(info) {
-                    alert("Event: " + info.event.title);
-                }
-            });
-            calendar.render();
-        });
-    </script>
+<div class="container">
+    <h2>Task Calendar</h2>
+    <div id="calendar"></div>
+</div>
+
+<script>
+$(document).ready(function () {
+    let calendarEl = document.getElementById("calendar");
+
+    if (!calendarEl) {
+        console.error("❌ Calendar element not found!");
+        return;
+    }
+
+    let calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: "dayGridMonth",
+        headerToolbar: {
+            left: "prev,next today",
+            center: "title",
+            right: "dayGridMonth,timeGridWeek,timeGridDay"
+        },
+
+        events: "/fetch_tasks",  // ✅ Fetch tasks from Flask API
+
+        dateClick: function (info) {
+            let selectedDate = info.dateStr;
+            let tasksForDate = calendar.getEvents().filter(event => event.startStr === selectedDate);
+
+            if (tasksForDate.length === 0) {
+                alert(`No tasks scheduled for ${selectedDate}.`);
+            } else {
+                let taskList = tasksForDate.map(task => `- ${task.title}`).join("\n");
+                alert(`📅 Tasks on ${selectedDate}:\n\n${taskList}`);
+            }
+        }
+    });
+
+    calendar.render();
+});
+</script>
 
 </body>
 </html>

@@ -1,4 +1,3 @@
-<!-- practical.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,11 +7,18 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/pre.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        .back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+    </style>
 </head>
 <body>
 
-<!-- Back Button -->
-<button class="btn back-button" onclick="window.location.href='/otimer'">⬅ Back</button>
+<!-- Back Button (Top-Left Corner) -->
+<button class="btn btn-secondary back-button" onclick="window.location.href='/otimer'">⬅ Back</button>
 
 <!-- Menu -->
 {% include 'menu.html' %}
@@ -20,7 +26,7 @@
 <div class="container mt-5">
     <h2 class="text-center">Practical Task</h2>
 
-    <form id="practicalForm" class="mb-4" method="POST" action="/add_practical">
+    <form id="practicalForm" class="mb-4">
         <div class="row">
             <div class="col-md-3">
                 <input type="text" name="task_name" class="form-control" placeholder="Task Name" required>
@@ -36,13 +42,13 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <button type="submit" class="btn btn-warning btn-custom">Add Task</button>
+                <button type="submit" class="btn btn-warning">Add Task</button>
             </div>
         </div>
     </form>
 
     <table class="table table-bordered">
-        <thead>
+        <thead class="table-dark">
             <tr>
                 <th>P_ID</th>
                 <th>Task</th>
@@ -54,16 +60,15 @@
         </thead>
         <tbody>
             {% for practical in practicals %}
-            <tr id="p_id-{{ practical[0] }}">
-                <td>{{ practical[0] }}</td>
-                <td>{{ practical[1] }}</td>
-                <td>{{ practical[2] }}</td>
-                <td>{{ practical[3] }}</td>
-                <td>{{ practical[4] }}</td>
+            <tr id="p_id-{{ practical.p_id }}">
+                <td>{{ practical.p_id }}</td>
+                <td>{{ practical.ptask_name }}</td>
+                <td>{{ practical.p_date }}</td>
+                <td>{{ practical.p_priority }}</td>
+                <td>{{ practical.p_status }}</td>
                 <td>
-                    <!-- Updated Link to Correctly Open timer.html -->
-                    <a href="/practical_timer/{{ practical[0] }}" class="btn btn-success btn-sm btn-custom">Start Timer</a>
-                    <button class="btn btn-danger btn-sm delete-practical btn-custom" data-id="{{ practical[0] }}">Delete</button>
+                    <a href="/practical_timer/{{ practical.p_id }}" class="btn btn-success btn-sm">Start Timer</a>
+                    <button class="btn btn-danger btn-sm delete-practical" data-id="{{ practical.p_id }}">Delete</button>
                 </td>
             </tr>
             {% endfor %}
@@ -71,17 +76,48 @@
     </table>
 </div>
 
+<!-- JavaScript for Handling Add & Delete -->
 <script>
 $(document).ready(function () {
-    $(document).on("click", ".delete-practical", function () {
-        let pId = $(this).data("id");
+    // Handle Add Task
+    $("#practicalForm").submit(function (e) {
+        e.preventDefault(); // Prevent normal form submission
+
+        let formData = $(this).serialize(); // Serialize form data
+
         $.ajax({
-            url: `/delete_practical/${pId}`,
-            type: "DELETE",
-            success: function () {
-                location.reload();
+            url: "/add_practical",
+            type: "POST",
+            data: formData,
+            success: function (response) {
+                if (response.success) {
+                    alert(response.message); // ✅ Show success message
+
+                    location.reload(); // ✅ Refresh page after clicking OK
+                } else {
+                    alert("Failed to add practical task.");
+                }
             }
         });
+    });
+
+    // Handle Delete Task with Confirmation
+    $(document).on("click", ".delete-practical", function () {
+        let pId = $(this).data("id");
+
+        if (confirm("Are you sure you want to delete this practical task?")) {
+            $.ajax({
+                url: `/delete_practical/${pId}`,
+                type: "DELETE",
+                success: function (response) {
+                    if (response.success) {
+                        $(`#p_id-${pId}`).remove(); // ✅ Remove from table
+                    } else {
+                        alert("Failed to delete the practical task.");
+                    }
+                }
+            });
+        }
     });
 });
 </script>

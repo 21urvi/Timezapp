@@ -1,20 +1,35 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    text-align: center;
-    padding: 20px;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
 }
 
 .calendar-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    background: #fff;
+    max-width: 90%;
+    margin: 20px auto;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 10px;
 }
 
 #calendar {
     max-width: 100%;
     margin: auto;
+    padding: 10px;
+    background: white;
+}
+
+@media (max-width: 768px) {
+    .calendar-container {
+        width: 100%;
+        padding: 10px;
+    }
 }
